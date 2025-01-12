@@ -12,11 +12,6 @@ class AttachStudentsRequest extends FormRequest
 
     public function authorize(): bool
     {
-        if ($this->user()->role !== User::ROLE_TEACHER) {
-            $this->errorMessage = '只有教师才能关联学生到课程';
-            return false;
-        }
-
         if ($this->route('course')->teacher_id !== $this->user()->id) {
             $this->errorMessage = '您只能关联学生到自己的课程';
             return false;

@@ -2,24 +2,10 @@
 
 namespace App\Http\Requests\Course;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Http\Requests\Traits\FailedAuthorizationTrait;
 
 class CreateCourseRequest extends FormRequest
 {
-    use FailedAuthorizationTrait;
-
-    public function authorize(): bool
-    {
-        if ($this->user()->role !== User::ROLE_TEACHER) {
-            $this->errorMessage = '只有教师才能创建课程';
-            return false;
-        }
-
-        return true;
-    }
-
     public function rules(): array
     {
         return [

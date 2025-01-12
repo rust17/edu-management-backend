@@ -13,17 +13,33 @@ Route::middleware('auth:api')->group(function () {
     // 登出
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // 课程管理
+    // 课程
     Route::prefix('courses')->group(function () {
-        Route::post('/', [CourseController::class, 'store']);
-        Route::post('/{course}/attach-students', [CourseController::class, 'attachStudents']);
-        Route::get('/my', [CourseController::class, 'my']);
+        Route::middleware('role:teacher')->group(function () {
+            // 创建课程
+            Route::post('/', [CourseController::class, 'store']);
+            // 关联学生到课程
+            Route::post('/{course}/attach-students', [CourseController::class, 'attachStudents']);
+        });
+
+        Route::middleware('role:student')->group(function () {
+            // 查看我的课程
+            Route::get('/my', [CourseController::class, 'my']);
+        });
     });
 
-    // 账单相关路由
+    // 账单
     Route::prefix('invoices')->group(function () {
-        Route::post('/', [InvoiceController::class, 'store']);
-        Route::post('/{invoice}/send', [InvoiceController::class, 'send']);
-        Route::get('/my', [InvoiceController::class, 'my']);
+        Route::middleware('role:teacher')->group(function () {
+            // 创建账单
+            Route::post('/', [InvoiceController::class, 'store']);
+            // 发送账单
+            Route::post('/{invoice}/send', [InvoiceController::class, 'send']);
+        });
+
+        Route::middleware('role:student')->group(function () {
+            // 查看我的账单
+            Route::get('/my', [InvoiceController::class, 'my']);
+        });
     });
 });

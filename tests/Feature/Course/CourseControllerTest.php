@@ -80,7 +80,7 @@ class CourseControllerTest extends TestCase
         $response->assertStatus(403)
             ->assertJson([
                 'code' => 1,
-                'message' => '只有教师才能创建课程',
+                'message' => '您没有权限执行此操作',
                 'data' => null
             ]);
     }
@@ -167,7 +167,7 @@ class CourseControllerTest extends TestCase
         $response->assertStatus(403)
             ->assertJson([
                 'code' => 1,
-                'message' => '只有教师才能关联学生到课程',
+                'message' => '您没有权限执行此操作',
                 'data' => null
             ]);
     }
@@ -301,7 +301,7 @@ class CourseControllerTest extends TestCase
         $response->assertStatus(403)
             ->assertJson([
                 'code' => 1,
-                'message' => '只有学生才能查看我的课程',
+                'message' => '您没有权限执行此操作',
                 'data' => null
             ]);
     }

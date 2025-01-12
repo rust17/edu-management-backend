@@ -2,24 +2,10 @@
 
 namespace App\Http\Requests\Course;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Http\Requests\Traits\FailedAuthorizationTrait;
 
 class ListMyCourseRequest extends FormRequest
 {
-    use FailedAuthorizationTrait;
-
-    public function authorize(): bool
-    {
-        if ($this->user()->role !== User::ROLE_STUDENT) {
-            $this->errorMessage = '只有学生才能查看我的课程';
-            return false;
-        }
-
-        return true;
-    }
-
     public function rules(): array
     {
         return [

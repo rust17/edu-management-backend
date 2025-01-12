@@ -77,7 +77,7 @@ class InvoiceControllerTest extends TestCase
         ]);
 
         $response->assertStatus(403)
-            ->assertJsonPath('message', '只有教师才能创建账单');
+            ->assertJsonPath('message', '您没有权限执行此操作');
     }
 
     /**
@@ -232,6 +232,6 @@ class InvoiceControllerTest extends TestCase
         $response = $this->getJson('/api/invoices/my');
 
         $response->assertStatus(403)
-            ->assertJsonPath('message', '只有学生才能查看我的账单');
+            ->assertJsonPath('message', '您没有权限执行此操作');
     }
 }

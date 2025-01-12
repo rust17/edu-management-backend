@@ -4,22 +4,9 @@ namespace App\Http\Requests\Invoice;
 
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Http\Requests\Traits\FailedAuthorizationTrait;
 
 class CreateInvoiceRequest extends FormRequest
 {
-    use FailedAuthorizationTrait;
-
-    public function authorize(): bool
-    {
-        if ($this->user()->role !== User::ROLE_TEACHER) {
-            $this->errorMessage = '只有教师才能创建账单';
-            return false;
-        }
-
-        return true;
-    }
-
     public function rules(): array
     {
         return [
