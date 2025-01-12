@@ -4,11 +4,11 @@ namespace App\Http\Requests\Course;
 
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Http\Requests\Traits\FailedAuthorizationTrait;
 
 class AttachStudentsRequest extends FormRequest
 {
-    protected $errorMessage;
+    use FailedAuthorizationTrait;
 
     public function authorize(): bool
     {
@@ -23,11 +23,6 @@ class AttachStudentsRequest extends FormRequest
         }
 
         return true;
-    }
-
-    protected function failedAuthorization()
-    {
-        throw new AuthorizationException($this->errorMessage ?? '您没有权限执行此操作');
     }
 
     public function rules(): array
