@@ -16,5 +16,6 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('courses')->group(function () {
         Route::post('/', [CourseController::class, 'store']);
         Route::post('/{course}/attach-students', [CourseController::class, 'attachStudents']);
+        Route::get('/my', [CourseController::class, 'my']);
     });
 });
