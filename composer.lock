@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d51ab55a51ede15702571d36d76ebdc9",
+    "content-hash": "ce1aa3a4cdef70f2b2f79ecace7d6f10",
     "packages": [
         {
             "name": "brick/math",
@@ -3430,6 +3430,29 @@
                 }
             ],
             "time": "2024-12-14T21:12:59+00:00"
+        },
+        {
+            "name": "poper/edu-management-models",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../edu-management-models",
+                "reference": "39f49c056d47383d63db0a67e4f613d4f2b226a2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "App\\Models\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Edu Management Eloquent Models",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "psr/clock",
@@ -9182,7 +9205,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "poper/edu-management-models": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
