@@ -128,7 +128,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'code' => 1,
-                'message' => '验证失败'
+                'message' => '参数校验失败'
             ])
             ->assertJsonValidationErrors(['email', 'password', 'role'], 'data');
     }

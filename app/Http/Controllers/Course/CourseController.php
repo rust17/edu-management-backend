@@ -8,6 +8,7 @@ use App\Http\Requests\Course\AttachStudentsRequest;
 use App\Models\Course;
 use App\Http\Requests\Course\ListMyCourseRequest;
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class CourseController extends Controller
 {
@@ -21,14 +22,16 @@ class CourseController extends Controller
     {
         $course = Course::create([
             'name' => $request->name,
-            'year_month' => $request->year_month,
+            'year_month' => Carbon::parse($request->year_month)->startOfMonth(),
             'fee' => $request->fee,
             'teacher_id' => $request->user()->id
         ]);
 
         return $this->success(
             '课程创建成功',
-            $course->load(['teacher', 'students'])
+            $course->only(['id', 'name', 'fee', 'teacher_id']) + [
+                'year_month' => $course->year_month->format('Y-m')
+            ]
         );
     }
 
@@ -41,12 +44,15 @@ class CourseController extends Controller
      */
     public function attachStudents(AttachStudentsRequest $request, Course $course)
     {
-        $course->students()->attach($request->student_ids);
+        // 只关联新的学生
+        if ($newStudentIds = collect($request->student_ids)
+            ->diff($course->students->pluck('id'))
+            ->toArray()
+        ) {
+            $course->students()->attach($newStudentIds);
+        }
 
-        return $this->success(
-            '课程学生设置成功',
-            $course->load(['teacher', 'students'])
-        );
+        return $this->success('课程学生设置成功');
     }
 
     /**
@@ -64,13 +70,25 @@ class CourseController extends Controller
 
         // 按年月筛选
         if ($request->filled('year_month')) {
-            $query->where('year_month', Carbon::parse($request->year_month)->format('Y-m'));
+            $query->where('year_month', Carbon::parse($request->year_month)->startOfMonth());
         }
 
         $courses = $query->paginate(
             $request->input('per_page', 15)
         );
 
-        return $this->success('获取成功', $courses);
+        return $this->success(
+            '获取成功',
+            $courses->tap(function (LengthAwarePaginator $courses) {
+                $courses->transform(function (Course $course) {
+                    return $course->only([
+                        'id', 'name', 'fee', 'teacher_id'
+                    ]) + [
+                        'teacher' => $course->teacher->only(['id', 'name']),
+                        'year_month' => $course->year_month->format('Y-m')
+                    ];
+                });
+            })
+        );
     }
 }

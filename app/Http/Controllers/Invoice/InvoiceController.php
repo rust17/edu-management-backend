@@ -8,6 +8,7 @@ use App\Http\Requests\Invoice\SendInvoiceRequest;
 use App\Http\Requests\Invoice\ListMyInvoiceRequest;
 use App\Models\Invoice;
 use App\Models\Course;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class InvoiceController extends Controller
 {
@@ -34,7 +35,12 @@ class InvoiceController extends Controller
 
         return $this->success(
             '账单创建成功',
-            $invoice->load(['course', 'student'])
+            $invoice->only(['id', 'course_id', 'student_id', 'amount', 'status']) + [
+                'course' => $invoice->course->only(['id', 'name']) + [
+                    'year_month' => $invoice->course->year_month->format('Y-m')
+                ],
+                'student' => $invoice->student->only(['id', 'name'])
+            ]
         );
     }
 
@@ -54,7 +60,12 @@ class InvoiceController extends Controller
 
         return $this->success(
             '账单已发送',
-            $invoice->load(['course', 'student'])
+            $invoice->only(['id', 'course_id', 'student_id', 'amount', 'status']) + [
+                'course' => $invoice->course->only(['id', 'name']) + [
+                    'year_month' => $invoice->course->year_month->format('Y-m')
+                ],
+                'student' => $invoice->student->only(['id', 'name'])
+            ]
         );
     }
 
@@ -68,7 +79,7 @@ class InvoiceController extends Controller
     {
         $query = $request->user()
             ->invoices()
-            ->with(['course.teacher'])
+            ->with(['course'])
             ->latest('id');
 
         // 按状态筛选
@@ -80,6 +91,17 @@ class InvoiceController extends Controller
             $request->input('per_page', 15)
         );
 
-        return $this->success('获取成功', $invoices);
+        return $this->success(
+            '获取成功',
+            $invoices->tap(function (LengthAwarePaginator $invoices) {
+                $invoices->transform(function (Invoice $invoice) {
+                    return $invoice->only(['id', 'course_id', 'student_id', 'amount', 'status']) + [
+                        'course' => $invoice->course->only(['id', 'name']) + [
+                            'year_month' => $invoice->course->year_month->format('Y-m')
+                        ]
+                    ];
+                });
+            })
+        );
     }
 }

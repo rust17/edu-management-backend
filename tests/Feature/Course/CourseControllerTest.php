@@ -45,8 +45,6 @@ class CourseControllerTest extends TestCase
                     'year_month',
                     'fee',
                     'teacher_id',
-                    'teacher',
-                    'students'
                 ]
             ])
             ->assertJson([
@@ -100,7 +98,7 @@ class CourseControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'code' => 1,
-                'message' => '验证失败'
+                'message' => '参数校验失败'
             ])
             ->assertJsonValidationErrors(['name', 'year_month', 'fee'], 'data');
     }
@@ -231,7 +229,7 @@ class CourseControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'code' => 1,
-                'message' => '验证失败'
+                'message' => '参数校验失败'
             ])
             ->assertJsonValidationErrors(['student_ids.0', 'student_ids.1'], 'data');
     }
@@ -276,7 +274,6 @@ class CourseControllerTest extends TestCase
                             'teacher' => [
                                 'id',
                                 'name',
-                                'email'
                             ]
                         ]
                     ],

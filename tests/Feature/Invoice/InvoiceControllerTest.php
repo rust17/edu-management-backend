@@ -183,10 +183,6 @@ class InvoiceControllerTest extends TestCase
                             'course' => [
                                 'id',
                                 'name',
-                                'teacher' => [
-                                    'id',
-                                    'name'
-                                ]
                             ]
                         ]
                     ]
