@@ -37,6 +37,7 @@ class CourseControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
+                'code',
                 'message',
                 'data' => [
                     'id',
@@ -49,6 +50,7 @@ class CourseControllerTest extends TestCase
                 ]
             ])
             ->assertJson([
+                'code' => 0,
                 'message' => '课程创建成功',
                 'data' => [
                     'name' => '数学课',
@@ -77,7 +79,9 @@ class CourseControllerTest extends TestCase
 
         $response->assertStatus(403)
             ->assertJson([
-                'message' => '只有教师才能创建课程'
+                'code' => 1,
+                'message' => '只有教师才能创建课程',
+                'data' => null
             ]);
     }
 
@@ -94,7 +98,11 @@ class CourseControllerTest extends TestCase
             ->postJson('/api/courses', []);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name', 'year_month', 'fee']);
+            ->assertJson([
+                'code' => 1,
+                'message' => '验证失败'
+            ])
+            ->assertJsonValidationErrors(['name', 'year_month', 'fee'], 'data');
     }
 
     /**
@@ -158,7 +166,9 @@ class CourseControllerTest extends TestCase
 
         $response->assertStatus(403)
             ->assertJson([
-                'message' => '只有教师才能关联学生到课程'
+                'code' => 1,
+                'message' => '只有教师才能关联学生到课程',
+                'data' => null
             ]);
     }
 
@@ -190,7 +200,9 @@ class CourseControllerTest extends TestCase
 
         $response->assertStatus(403)
             ->assertJson([
-                'message' => '您只能关联学生到自己的课程'
+                'code' => 1,
+                'message' => '您只能关联学生到自己的课程',
+                'data' => null
             ]);
     }
 
@@ -217,6 +229,10 @@ class CourseControllerTest extends TestCase
             ]);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['student_ids.0', 'student_ids.1']);
+            ->assertJson([
+                'code' => 1,
+                'message' => '验证失败'
+            ])
+            ->assertJsonValidationErrors(['student_ids.0', 'student_ids.1'], 'data');
     }
 }

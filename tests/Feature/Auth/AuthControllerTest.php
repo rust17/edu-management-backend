@@ -33,9 +33,17 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'access_token',
-                'token_type',
-                'user'
+                'code',
+                'message',
+                'data' => [
+                    'access_token',
+                    'token_type',
+                    'user'
+                ]
+            ])
+            ->assertJson([
+                'code' => 0,
+                'message' => '登录成功'
             ]);
     }
 
@@ -55,9 +63,17 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'access_token',
-                'token_type',
-                'user'
+                'code',
+                'message',
+                'data' => [
+                    'access_token',
+                    'token_type',
+                    'user'
+                ]
+            ])
+            ->assertJson([
+                'code' => 0,
+                'message' => '登录成功'
             ]);
     }
 
@@ -77,7 +93,9 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'message' => '用户名或密码错误'
+                'code' => 1,
+                'message' => '用户名或密码错误',
+                'data' => null
             ]);
     }
 
@@ -97,7 +115,9 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'message' => '用户名或密码错误'
+                'code' => 1,
+                'message' => '用户名或密码错误',
+                'data' => null
             ]);
     }
 
@@ -106,7 +126,11 @@ class AuthControllerTest extends TestCase
         $response = $this->postJson('/api/login', []);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(['email', 'password', 'role']);
+            ->assertJson([
+                'code' => 1,
+                'message' => '验证失败'
+            ])
+            ->assertJsonValidationErrors(['email', 'password', 'role'], 'data');
     }
 
     public function test_user_can_logout()
@@ -126,12 +150,14 @@ class AuthControllerTest extends TestCase
 
         // 使用真实的 token 进行登出
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $loginResponse->json('access_token'),
+            'Authorization' => 'Bearer ' . $loginResponse->json('data.access_token'),
         ])->postJson('/api/logout');
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => '已成功登出'
+                'code' => 0,
+                'message' => '已成功登出',
+                'data' => null
             ]);
     }
 
@@ -139,6 +165,11 @@ class AuthControllerTest extends TestCase
     {
         $response = $this->postJson('/api/logout');
 
-        $response->assertStatus(401);
+        $response->assertStatus(401)
+            ->assertJson([
+                'code' => 1,
+                'message' => 'Unauthenticated.',
+                'data' => null
+            ]);
     }
 }

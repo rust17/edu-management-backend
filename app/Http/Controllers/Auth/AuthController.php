@@ -23,12 +23,10 @@ class AuthController extends Controller
             ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => '用户名或密码错误'
-            ], 401);
+            return $this->error('用户名或密码错误', 1, 401);
         }
 
-        return response()->json([
+        return $this->success('登录成功', [
             'access_token' => $user->createToken('auth_token')->accessToken,
             'token_type' => 'Bearer',
             'user' => $user->only(['id', 'name', 'email', 'role'])
@@ -45,8 +43,6 @@ class AuthController extends Controller
     {
         $request->user()->token()->revoke();
 
-        return response()->json([
-            'message' => '已成功登出'
-        ]);
+        return $this->success('已成功登出');
     }
 }

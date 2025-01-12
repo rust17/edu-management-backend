@@ -24,10 +24,10 @@ class CourseController extends Controller
             'teacher_id' => $request->user()->id
         ]);
 
-        return response()->json([
-            'message' => '课程创建成功',
-            'data' => $course->load(['teacher', 'students'])
-        ]);
+        return $this->success(
+            '课程创建成功',
+            $course->load(['teacher', 'students'])
+        );
     }
 
     /**
@@ -41,9 +41,9 @@ class CourseController extends Controller
     {
         $course->students()->attach($request->student_ids);
 
-        return response()->json([
-            'message' => '课程学生设置成功',
-            'data' => $course->load(['teacher', 'students'])
-        ]);
+        return $this->success(
+            '课程学生设置成功',
+            $course->load(['teacher', 'students'])
+        );
     }
 }
