@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Factories;
+
 use App\Models\Course;
 use App\Models\User;
 use Carbon\Carbon;
@@ -32,7 +34,8 @@ class CourseFactory extends Factory
                 fake()->randomElement($types) . '课程',
             'year_month' => $date,
             'fee' => fake()->randomFloat(2, 100, 10000),
-            'teacher_id' => fn () => factory(User::class)->create(['role' => 'teacher'])->id,
+            'teacher_id' => User::factory()->create(['role' => User::ROLE_TEACHER])->id
         ];
     }
 }
+

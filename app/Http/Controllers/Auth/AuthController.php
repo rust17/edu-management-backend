@@ -10,6 +10,12 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    /**
+     * 登录
+     *
+     * @param AuthRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(AuthRequest $request)
     {
         $user = User::where('email', $request->email)
@@ -29,6 +35,12 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * 登出
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();

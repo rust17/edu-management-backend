@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Factories;
+
 use App\Models\CourseStudent;
 use App\Models\User;
 use App\Models\Course;
@@ -12,8 +14,8 @@ class CourseStudentFactory extends Factory
     public function definition(): array
     {
         return [
-            'course_id' => fn () => factory(Course::class)->create()->id,
-            'student_id' => fn () => factory(User::class)->create(['role' => 'student'])->id,
+            'course_id' => fn () => Course::factory()->create()->id,
+            'student_id' => fn () => User::factory()->create(['role' => User::ROLE_STUDENT])->id,
         ];
     }
 }

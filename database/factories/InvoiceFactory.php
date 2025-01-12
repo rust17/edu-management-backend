@@ -1,5 +1,7 @@
 <?php
 
+namespace Database\Factories;
+
 use App\Models\Invoice;
 use App\Models\Course;
 use App\Models\User;
@@ -11,11 +13,11 @@ class InvoiceFactory extends Factory
 
     public function definition(): array
     {
-        $course = factory(Course::class)->create();
+        $course = Course::factory()->create();
 
         return [
             'course_id' => $course->id,
-            'student_id' => fn () => factory(User::class)->create(['role' => 'student'])->id,
+            'student_id' => fn () => User::factory()->create(['role' => User::ROLE_STUDENT])->id,
             'status' => fake()->randomElement(['pending', 'paid', 'failed']),
             'amount' => fake()->randomFloat(2, 100, 10000),
         ];
