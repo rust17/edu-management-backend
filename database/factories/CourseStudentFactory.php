@@ -1,17 +1,19 @@
 <?php
 
+use App\Models\CourseStudent;
 use App\Models\User;
 use App\Models\Course;
-use App\Models\CourseStudent;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(CourseStudent::class, function (Faker $faker) {
-    return [
-        'course_id' => function () {
-            return factory(Course::class)->create()->id;
-        },
-        'student_id' => function () {
-            return factory(User::class)->create(['role' => 'student'])->id;
-        },
-    ];
-});
+class CourseStudentFactory extends Factory
+{
+    protected $model = CourseStudent::class;
+
+    public function definition(): array
+    {
+        return [
+            'course_id' => fn () => factory(Course::class)->create()->id,
+            'student_id' => fn () => factory(User::class)->create(['role' => 'student'])->id,
+        ];
+    }
+}
