@@ -253,7 +253,7 @@ class CourseControllerTest extends TestCase
         Course::factory()->count(2)->create();
 
         $response = $this->actingAs($student, 'api')
-            ->getJson('/api/courses/my');
+            ->getJson('/api/courses/student-courses');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -274,7 +274,10 @@ class CourseControllerTest extends TestCase
                             'teacher' => [
                                 'id',
                                 'name',
-                            ]
+                            ],
+                            'invoice_status',
+                            'invoice_send_at',
+                            'paid_at'
                         ]
                     ],
                     'total',
@@ -293,7 +296,7 @@ class CourseControllerTest extends TestCase
         ]);
 
         $response = $this->actingAs($teacher, 'api')
-            ->getJson('/api/courses/my');
+            ->getJson('/api/courses/student-courses');
 
         $response->assertStatus(403)
             ->assertJson([
@@ -329,7 +332,7 @@ class CourseControllerTest extends TestCase
         });
 
         $response = $this->actingAs($student, 'api')
-            ->getJson('/api/courses/my?year_month=2024-03');
+            ->getJson('/api/courses/student-courses?year_month=2024-03');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -337,5 +340,102 @@ class CourseControllerTest extends TestCase
                 'message' => '获取成功'
             ])
             ->assertJsonCount(2, 'data.data');
+    }
+
+    /**
+     * 测试按关键词筛选课程
+     */
+    public function test_student_can_filter_courses_by_keyword()
+    {
+        $student = User::factory()->create([
+            'role' => User::ROLE_STUDENT
+        ]);
+
+        // 创建包含特定关键词的课程
+        Course::factory()->count(2)->create([
+            'name' => '高等数学'
+        ])->each(function ($course) use ($student) {
+            $course->students()->attach($student->id);
+        });
+
+        // 创建其他课程
+        Course::factory()->count(3)->create([
+            'name' => '英语课程'
+        ])->each(function ($course) use ($student) {
+            $course->students()->attach($student->id);
+        });
+
+        $response = $this->actingAs($student, 'api')
+            ->getJson('/api/courses/student-courses?keyword=数学');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'code' => 0,
+                'message' => '获取成功'
+            ])
+            ->assertJsonCount(2, 'data.data')
+            ->assertJsonPath('data.data.0.name', '高等数学')
+            ->assertJsonPath('data.data.1.name', '高等数学');
+    }
+
+    /**
+     * 测试学生可以查看自己已选课程的详情
+     */
+    public function test_student_can_view_own_course_detail()
+    {
+        $student = User::factory()->create([
+            'role' => User::ROLE_STUDENT
+        ]);
+
+        $course = Course::factory()->create();
+        $course->students()->attach($student->id);
+
+        $response = $this->actingAs($student, 'api')
+            ->getJson("/api/courses/student-courses/{$course->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'code' => 0,
+                'message' => '获取成功'
+            ])
+            ->assertJsonStructure([
+                'data' => [
+                    'id',
+                    'name',
+                    'year_month',
+                    'fee',
+                    'teacher_id',
+                    'teacher' => [
+                        'id',
+                        'name',
+                    ],
+                    'invoice_status',
+                    'invoice_send_at',
+                    'paid_at'
+                ]
+            ]);
+    }
+
+    /**
+     * 测试学生不能查看未选课程的详情
+     */
+    public function test_student_cannot_view_unselected_course_detail()
+    {
+        $student = User::factory()->create([
+            'role' => User::ROLE_STUDENT
+        ]);
+
+        $course = Course::factory()->create();
+        // 不关联学生和课程
+
+        $response = $this->actingAs($student, 'api')
+            ->getJson("/api/courses/student-courses/{$course->id}");
+
+        $response->assertStatus(403)
+            ->assertJson([
+                'code' => 1,
+                'message' => '您没有权限查看该课程',
+                'data' => null
+            ]);
     }
 }

@@ -24,7 +24,9 @@ Route::middleware('auth:api')->group(function () {
 
         Route::middleware('role:student')->group(function () {
             // 查看我的课程
-            Route::get('/my', [CourseController::class, 'my']);
+            Route::get('/student-courses', [CourseController::class, 'studentCourses']);
+            // 查看我的课程详情
+            Route::get('/student-courses/{course}', [CourseController::class, 'studentCourse']);
         });
     });
 
@@ -39,7 +41,10 @@ Route::middleware('auth:api')->group(function () {
 
         Route::middleware('role:student')->group(function () {
             // 查看我的账单
-            Route::get('/my', [InvoiceController::class, 'my']);
+            Route::get('/student-invoices', [InvoiceController::class, 'studentInvoices']);
+            // 查看我的账单详情
+            Route::get('/student-invoices/{invoice}', [InvoiceController::class, 'studentInvoice']);
         });
     });
 });
+

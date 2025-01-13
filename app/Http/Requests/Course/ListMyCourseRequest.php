@@ -11,7 +11,8 @@ class ListMyCourseRequest extends FormRequest
         return [
             'year_month' => 'nullable|date_format:Y-m',
             'page' => 'nullable|integer|min:1',
-            'per_page' => 'nullable|integer|min:1|max:100'
+            'per_page' => 'nullable|integer|min:1|max:100',
+            'keyword' => 'nullable|string'
         ];
     }
 
@@ -23,7 +24,8 @@ class ListMyCourseRequest extends FormRequest
             'page.min' => '页码不能小于1',
             'per_page.integer' => '每页数量必须为整数',
             'per_page.min' => '每页数量不能小于1',
-            'per_page.max' => '每页数量不能大于100'
+            'per_page.max' => '每页数量不能大于100',
+            'keyword.string' => '关键词必须为字符串'
         ];
     }
 }
