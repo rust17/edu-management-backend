@@ -98,7 +98,7 @@ class CourseControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'code' => 1,
-                'message' => '参数校验失败'
+                'message' => '参数校验失败: 课程名称不能为空 (and 2 more errors)'
             ])
             ->assertJsonValidationErrors(['name', 'year_month', 'fee'], 'data');
     }
@@ -229,7 +229,7 @@ class CourseControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'code' => 1,
-                'message' => '参数校验失败'
+                'message' => '参数校验失败: 选择的学生不存在或不是学生身份 (and 1 more error)'
             ])
             ->assertJsonValidationErrors(['student_ids.0', 'student_ids.1'], 'data');
     }

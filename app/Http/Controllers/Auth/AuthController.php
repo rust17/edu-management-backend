@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\AuthRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Enums\Business;
 
 class AuthController extends Controller
 {
@@ -23,7 +24,7 @@ class AuthController extends Controller
             ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->error('用户名或密码错误', 1, 401);
+            return $this->error('用户名或密码错误', Business::LOGIN_FAILED->value, 401);
         }
 
         return $this->success('登录成功', [

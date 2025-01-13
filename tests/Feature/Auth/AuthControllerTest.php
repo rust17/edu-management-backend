@@ -93,7 +93,7 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'code' => 1,
+                'code' => 2,
                 'message' => '用户名或密码错误',
                 'data' => null
             ]);
@@ -115,7 +115,7 @@ class AuthControllerTest extends TestCase
 
         $response->assertStatus(401)
             ->assertJson([
-                'code' => 1,
+                'code' => 2,
                 'message' => '用户名或密码错误',
                 'data' => null
             ]);
@@ -128,7 +128,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'code' => 1,
-                'message' => '参数校验失败'
+                'message' => '参数校验失败: 用户名必须是邮箱格式 (and 2 more errors)',
             ])
             ->assertJsonValidationErrors(['email', 'password', 'role'], 'data');
     }

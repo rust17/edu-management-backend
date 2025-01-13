@@ -19,8 +19,7 @@ class AuthRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => '邮箱不能为空',
-            'email.email' => '邮箱格式不正确',
+            'email.*' => '用户名必须是邮箱格式',
             'password.required' => '密码不能为空',
             'role.required' => '角色不能为空',
             'role.in' => '角色必须是老师或学生'
