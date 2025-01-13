@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Course\CourseController;
 use App\Http\Controllers\Invoice\InvoiceController;
+use App\Http\Controllers\Student\StudentController;
+use App\Http\Controllers\Statistics\StatisticsController;
 use Illuminate\Support\Facades\Route;
 
 // 登录
@@ -18,8 +20,14 @@ Route::middleware('auth:api')->group(function () {
         Route::middleware('role:teacher')->group(function () {
             // 创建课程
             Route::post('/', [CourseController::class, 'store']);
+            // 编辑课程
+            Route::put('/{course}', [CourseController::class, 'update']);
             // 关联学生到课程
             Route::post('/{course}/attach-students', [CourseController::class, 'attachStudents']);
+            // 获取课程列表
+            Route::get('/teacher-courses', [CourseController::class, 'teacherCourses']);
+            // 获取课程详情
+            Route::get('/teacher-courses/{course}', [CourseController::class, 'teacherCourse']);
         });
 
         Route::middleware('role:student')->group(function () {
@@ -37,14 +45,25 @@ Route::middleware('auth:api')->group(function () {
             Route::post('/', [InvoiceController::class, 'store']);
             // 发送账单
             Route::post('/{invoice}/send', [InvoiceController::class, 'send']);
+            // 获取老师账单列表
+            Route::get('/teacher-invoices', [InvoiceController::class, 'teacherInvoices']);
         });
 
         Route::middleware('role:student')->group(function () {
-            // 查看我的账单
+            // 获取学生的账单列表
             Route::get('/student-invoices', [InvoiceController::class, 'studentInvoices']);
-            // 查看我的账单详情
+            // 获取学生的账单详情
             Route::get('/student-invoices/{invoice}', [InvoiceController::class, 'studentInvoice']);
         });
     });
+
+    // 获取老师的学生列表
+    Route::middleware('role:teacher')->get('/students', [StudentController::class, 'index']);
+
+    // 获取老师的统计信息
+    Route::middleware('role:teacher')->get('/teacher-statistics', [StatisticsController::class, 'teacherStatistics']);
+
+    // 获取学生的统计信息
+    Route::middleware('role:student')->get('/student-statistics', [StatisticsController::class, 'studentStatistics']);
 });
 

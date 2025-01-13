@@ -71,7 +71,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * 查看我的账单
+     * 获取学生的账单列表
      *
      * @param ListMyInvoiceRequest $request
      * @return \Illuminate\Http\JsonResponse
@@ -130,7 +130,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * 查看账单详情
+     * 获取学生的账单详情
      *
      * @param Invoice $invoice
      * @return \Illuminate\Http\JsonResponse
@@ -159,5 +159,69 @@ class InvoiceController extends Controller
                     'teacher_name' => $invoice->course->teacher->name,
                 ]
         ]);
+    }
+
+    /**
+     * 获取教师的账单列表
+     *
+     * @param ListMyInvoiceRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function teacherInvoices(ListMyInvoiceRequest $request)
+    {
+        $query = Invoice::query()
+            ->with(['course', 'student'])
+            ->whereHas('course', function ($query) {
+                $query->where('teacher_id', auth()->id());
+            })
+            ->latest('id');
+
+        // 按状态筛选
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // 按课程关键词筛选
+        if ($request->filled('keyword')) {
+            $query->whereHas('course', function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->keyword . '%');
+            })->orWhereHas('student', function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->keyword . '%');
+            });
+        }
+
+        // 按课程年月筛选
+        if ($request->filled('year_month')) {
+            $query->whereHas('course', function ($query) use ($request) {
+                $query->where('year_month', Carbon::parse($request->year_month)->startOfMonth());
+            });
+        }
+
+        // 按账单发送时间筛选
+        if ($request->filled('send_start') && $request->filled('send_end')) {
+            $query->whereBetween('created_at', [$request->send_start, $request->send_end]);
+        }
+
+        $invoices = $query->paginate(
+            $request->input('per_page', 15)
+        );
+
+        return $this->success(
+            '获取成功',
+            $invoices->tap(function (LengthAwarePaginator $invoices) {
+                $invoices->transform(function (Invoice $invoice) {
+                    return $invoice->only([
+                        'id', 'course_id', 'student_id', 'amount', 'status'
+                    ]) + [
+                        'send_at' => $invoice->created_at->format('Y-m-d H:i:s'),
+                        'paid_at' => '', //todo
+                        'course' => $invoice->course->only(['id', 'name']) + [
+                            'year_month' => $invoice->course->year_month->format('Y-m')
+                        ],
+                        'student_name' => $invoice->student->name
+                    ];
+                });
+            })
+        );
     }
 }

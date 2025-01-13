@@ -12,6 +12,8 @@ class CreateCourseRequest extends FormRequest
             'name' => 'required|string|max:255',
             'year_month' => 'required|date_format:Y-m',
             'fee' => 'required|numeric|min:0',
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'exists:users,id',
         ];
     }
 
@@ -25,6 +27,9 @@ class CreateCourseRequest extends FormRequest
             'fee.required' => '费用不能为空',
             'fee.numeric' => '费用必须为数字',
             'fee.min' => '费用不能小于0',
+            'student_ids.required' => '学生不能为空',
+            'student_ids.array' => '学生必须为数组',
+            'student_ids.*.exists' => '学生不存在',
         ];
     }
 }
