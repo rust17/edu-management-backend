@@ -10,6 +10,7 @@
         "laravel/framework": "^10.10",
         "laravel/passport": "^11.8",
         "laravel/tinker": "^2.8",
+        "omise/omise-php": "^2.18",
         "poper/edu-management-models": "*@dev"
     },
     "require-dev": {

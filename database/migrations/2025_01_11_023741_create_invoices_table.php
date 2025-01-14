@@ -15,6 +15,7 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('no')->unique();
             $table->unsignedBigInteger('course_id');
             $table->unsignedBigInteger('student_id'); // users.id
             $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');

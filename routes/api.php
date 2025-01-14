@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Course\CourseController;
 use App\Http\Controllers\Invoice\InvoiceController;
+use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Statistics\StatisticsController;
 use Illuminate\Support\Facades\Route;
@@ -65,5 +66,9 @@ Route::middleware('auth:api')->group(function () {
 
     // 获取学生的统计信息
     Route::middleware('role:student')->get('/student-statistics', [StatisticsController::class, 'studentStatistics']);
-});
 
+    Route::prefix('payments')->group(function () {
+        // omise 信用卡支付
+        Route::middleware('role:student')->post('omise-card', [PaymentController::class, 'omisePay']);
+    });
+});

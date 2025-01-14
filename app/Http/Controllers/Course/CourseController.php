@@ -73,7 +73,7 @@ class CourseController extends Controller
     }
 
     /**
-     * 查看我的课程
+     * 获取学生的课程列表
      *
      * @param ListMyCourseRequest $request
      * @return \Illuminate\Http\JsonResponse
@@ -114,6 +114,8 @@ class CourseController extends Controller
                             'year_month' => $course->year_month->format('Y-m'),
                             'invoice_status' => $invoice?->status,
                             'invoice_send_at' => $invoice?->created_at->format('Y-m-d H:i:s'),
+                            'invoice_id' => $invoice?->id,
+                            'invoice_no' => $invoice?->no,
                             'paid_at' => '' //todo
                         ];
                     })
@@ -147,6 +149,8 @@ class CourseController extends Controller
                 'teacher' => $course->teacher->only(['id', 'name']),
                 'invoice_status' => $invoice?->status,
                 'invoice_send_at' => $invoice?->created_at->format('Y-m-d H:i:s'),
+                'invoice_id' => $invoice?->id,
+                'invoice_no' => $invoice?->no,
                 'paid_at' => '' //todo
             ]
         );
