@@ -33,8 +33,9 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware('web')
-                ->group(base_path('routes/web.php'));
+            // 项目是 API 项目，不需要 web 路由
+            // Route::middleware('web')
+            //     ->group(base_path('routes/web.php'));
         });
     }
 }
