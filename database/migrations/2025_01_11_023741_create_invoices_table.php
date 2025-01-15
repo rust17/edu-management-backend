@@ -23,17 +23,6 @@ class CreateInvoicesTable extends Migration
             $table->dateTime('sent_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
-            // 外键约束
-            $table->foreign('course_id')
-                  ->references('id')
-                  ->on('courses')
-                  ->onDelete('restrict');
-
-            $table->foreign('student_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('restrict');
         });
     }
 

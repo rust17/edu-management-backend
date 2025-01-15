@@ -21,12 +21,6 @@ class CreateCoursesTable extends Migration
             $table->unsignedBigInteger('teacher_id'); // users.id
             $table->timestamps();
             $table->softDeletes();
-
-            // 外键约束
-            $table->foreign('teacher_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onDelete('restrict');
         });
     }
 

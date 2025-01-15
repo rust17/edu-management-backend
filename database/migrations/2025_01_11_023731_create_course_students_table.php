@@ -18,12 +18,6 @@ class CreateCourseStudentsTable extends Migration
             $table->unsignedBigInteger('course_id');
             $table->unsignedBigInteger('student_id'); // users.id
 
-            // 外键约束
-            $table->foreign('course_id')
-                  ->references('id')
-                  ->on('courses')
-                  ->onDelete('restrict');
-
             // 唯一约束，避免重复关联
             $table->unique(['course_id', 'student_id']);
         });

@@ -24,9 +24,6 @@ return new class extends Migration
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('invoice_id')->references('id')->on('invoices');
-            $table->foreign('student_id')->references('id')->on('users');
         });
     }
 
