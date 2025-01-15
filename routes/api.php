@@ -1,11 +1,13 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Course\CourseController;
-use App\Http\Controllers\Invoice\InvoiceController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Course\StudentController as StudentCourseController;
+use App\Http\Controllers\Course\TeacherController;
+use App\Http\Controllers\Invoice\StudentController as StudentInvoiceController;
+use App\Http\Controllers\Invoice\TeacherController as TeacherInvoiceController;
 use App\Http\Controllers\Payment\PaymentController;
-use App\Http\Controllers\Student\StudentController;
-use App\Http\Controllers\Statistics\StatisticsController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Route;
 
 // 登录
@@ -20,20 +22,20 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('courses')->group(function () {
         Route::middleware('role:teacher')->group(function () {
             // 创建课程
-            Route::post('/', [CourseController::class, 'store']);
+            Route::post('/', [TeacherController::class, 'store']);
             // 编辑课程
-            Route::put('/{course}', [CourseController::class, 'update']);
+            Route::put('/{course}', [TeacherController::class, 'update']);
             // 获取课程列表
-            Route::get('/teacher-courses', [CourseController::class, 'teacherCourses']);
+            Route::get('/teacher-courses', [TeacherController::class, 'teacherCourses']);
             // 获取课程详情
-            Route::get('/teacher-courses/{course}', [CourseController::class, 'teacherCourse']);
+            Route::get('/teacher-courses/{course}', [TeacherController::class, 'teacherCourse']);
         });
 
         Route::middleware('role:student')->group(function () {
             // 查看我的课程
-            Route::get('/student-courses', [CourseController::class, 'studentCourses']);
+            Route::get('/student-courses', [StudentCourseController::class, 'studentCourses']);
             // 查看我的课程详情
-            Route::get('/student-courses/{course}', [CourseController::class, 'studentCourse']);
+            Route::get('/student-courses/{course}', [StudentCourseController::class, 'studentCourse']);
         });
     });
 
@@ -41,18 +43,18 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('invoices')->group(function () {
         Route::middleware('role:teacher')->group(function () {
             // 创建账单
-            Route::post('/', [InvoiceController::class, 'store']);
+            Route::post('/', [TeacherInvoiceController::class, 'store']);
             // 发送账单
-            Route::post('/{course}/send', [InvoiceController::class, 'send']);
+            Route::post('/{course}/send', [TeacherInvoiceController::class, 'send']);
             // 获取老师账单列表
-            Route::get('/teacher-invoices', [InvoiceController::class, 'teacherInvoices']);
+            Route::get('/teacher-invoices', [TeacherInvoiceController::class, 'teacherInvoices']);
         });
 
         Route::middleware('role:student')->group(function () {
             // 获取学生的账单列表
-            Route::get('/student-invoices', [InvoiceController::class, 'studentInvoices']);
+            Route::get('/student-invoices', [StudentInvoiceController::class, 'studentInvoices']);
             // 获取学生的账单详情
-            Route::get('/student-invoices/{invoice}', [InvoiceController::class, 'studentInvoice']);
+            Route::get('/student-invoices/{invoice}', [StudentInvoiceController::class, 'studentInvoice']);
         });
     });
 

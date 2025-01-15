@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Statistics;
+namespace Tests\Feature;
 
 use App\Models\Course;
 use App\Models\Invoice;
