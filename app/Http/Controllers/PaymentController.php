@@ -6,7 +6,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Payment\OmisePayRequest;
-use App\Services\OmisePaymentService;
+use App\Http\Services\OmisePaymentService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 

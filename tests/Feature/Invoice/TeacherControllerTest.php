@@ -282,21 +282,21 @@ class TeacherControllerTest extends TestCase
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'created_at' => '2024-03-01 10:00:00'
+            'sent_at' => '2024-03-01 10:00:00'
         ]);
 
         // 创建一个较晚的账单
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'created_at' => '2024-03-15 10:00:00'
+            'sent_at' => '2024-03-15 10:00:00'
         ]);
 
         // 创建一个更晚的账单
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'created_at' => '2024-03-31 10:00:00'
+            'sent_at' => '2024-03-31 10:00:00'
         ]);
 
         $response = $this->getJson('/api/invoices/teacher-invoices?send_start=2024-03-10&send_end=2024-03-20');

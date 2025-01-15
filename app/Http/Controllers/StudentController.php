@@ -20,11 +20,10 @@ class StudentController extends Controller
 
         // 按关键词搜索
         if ($request->filled('keyword')) {
-            $keyword = $request->keyword;
-            $query->where(function ($query) use ($keyword) {
-                $query->where('name', 'like', "%{$keyword}%")
-                    ->orWhere('email', 'like', "%{$keyword}%");
-            });
+            $query->where(
+                fn ($query) => $query->where('name', 'like', "%{$request->keyword}%")
+                    ->orWhere('email', 'like', "%{$request->keyword}%")
+                );
         }
 
         return $this->success('获取成功', $query->get()->map(
