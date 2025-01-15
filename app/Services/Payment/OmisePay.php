@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Services\Payment;
 
 use OmiseCharge;
 use OmiseException;
@@ -8,7 +8,7 @@ use Exception;
 
 define('OMISE_API_VERSION', config('services.omise.api_version'));
 
-class OmisePaymentService
+class OmisePay
 {
     /**
      * 使用 token 向信用卡收款
