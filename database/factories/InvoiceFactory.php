@@ -20,6 +20,7 @@ class InvoiceFactory extends Factory
             'student_id' => fn () => User::factory()->create(['role' => User::ROLE_STUDENT])->id,
             'status' => fake()->randomElement(['pending', 'paid', 'failed']),
             'amount' => fake()->randomFloat(2, 100, 10000),
+            'no' => Invoice::generateNo(),
         ];
     }
 }

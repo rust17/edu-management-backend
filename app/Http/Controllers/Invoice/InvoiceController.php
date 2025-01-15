@@ -8,7 +8,9 @@ use App\Http\Requests\Invoice\SendInvoiceRequest;
 use App\Http\Requests\Invoice\ListMyInvoiceRequest;
 use App\Models\Invoice;
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class InvoiceController extends Controller
@@ -27,47 +29,60 @@ class InvoiceController extends Controller
             return $this->error('您只能创建自己课程的账单', 1, 403);
         }
 
-        $invoice = Invoice::create([
-            'course_id' => $request->course_id,
-            'student_id' => $request->student_id,
-            'amount' => $course->fee,
-            'status' => Invoice::STATUS_PENDING
-        ]);
+        try {
+            DB::beginTransaction();
 
-        return $this->success(
-            '账单创建成功',
-            $invoice->only(['id', 'course_id', 'student_id', 'amount', 'status']) + [
-                'course' => $invoice->course->only(['id', 'name']) + [
-                    'year_month' => $invoice->course->year_month->format('Y-m')
-                ],
-                'student' => $invoice->student->only(['id', 'name'])
-            ]
-        );
+            User::query()
+                ->whereIn('id', $request->student_ids)
+                ->whereDoesntHave('invoices',
+                    fn ($query) => $query->where('course_id', $course->id)
+                )->each(
+                    fn (User $user) => Invoice::create([
+                    'course_id' => $course->id,
+                    'student_id' => $user->id,
+                    'amount' => $course->fee,
+                    'status' => Invoice::STATUS_PENDING,
+                    'no' => Invoice::generateNo(),
+                ])
+            );
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->error('账单创建失败，请重试', 1, 500);
+        }
+
+        return $this->success('账单创建成功');
     }
 
     /**
      * 发送账单
      *
      * @param SendInvoiceRequest $request
-     * @param Invoice $invoice
+     * @param Course $course
      * @return \Illuminate\Http\JsonResponse
      */
-    public function send(SendInvoiceRequest $request, Invoice $invoice)
+    public function send(SendInvoiceRequest $request, Course $course)
     {
         // 这里可以添加发送通知的逻辑
         // 比如发送邮件或其他通知
 
-        $invoice->update(['status' => Invoice::STATUS_PENDING]);
+        try {
+            DB::beginTransaction();
 
-        return $this->success(
-            '账单已发送',
-            $invoice->only(['id', 'course_id', 'student_id', 'amount', 'status']) + [
-                'course' => $invoice->course->only(['id', 'name']) + [
-                    'year_month' => $invoice->course->year_month->format('Y-m')
-                ],
-                'student' => $invoice->student->only(['id', 'name'])
-            ]
-        );
+            $now = now();
+            $course->invoices->whereIn('student_id', $request->student_ids)->map(
+                fn (Invoice $invoice) => $invoice->update(['sent_at' => $now])
+            );
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+            return $this->error('账单发送失败，请重试', 1, 500);
+        }
+
+        return $this->success('账单已发送');
     }
 
     /**
@@ -80,6 +95,7 @@ class InvoiceController extends Controller
     {
         $query = $request->user()
             ->invoices()
+            ->whereNotNull('sent_at') // 老师发送账单后，学生才能看到
             ->with(['course'])
             ->latest('id');
 
@@ -104,7 +120,7 @@ class InvoiceController extends Controller
 
         // 按账单发送时间筛选
         if ($request->filled('send_start') && $request->filled('send_end')) {
-            $query->whereBetween('created_at', [$request->send_start, $request->send_end]);
+            $query->whereBetween('sent_at', [$request->send_start, $request->send_end]);
         }
 
         $invoices = $query->paginate(
@@ -118,7 +134,7 @@ class InvoiceController extends Controller
                     return $invoice->only([
                         'id', 'course_id', 'student_id', 'amount', 'status'
                     ]) + [
-                        'send_at' => $invoice->created_at->format('Y-m-d H:i:s'),
+                        'send_at' => $invoice->sent_at,
                         'paid_at' => '', //todo
                         'course' => $invoice->course->only(['id', 'name']) + [
                             'year_month' => $invoice->course->year_month->format('Y-m')
@@ -137,8 +153,8 @@ class InvoiceController extends Controller
      */
     public function studentInvoice(Invoice $invoice)
     {
-        // 检查是否是自己的账单
-        if ($invoice->student_id !== auth()->id()) {
+        // 检查是否是自己的账单 或者 账单未发送
+        if ($invoice->student_id !== auth()->id() || $invoice->sent_at === null) {
             return $this->error('您没有权限查看该账单', 1, 403);
         }
 

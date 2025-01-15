@@ -23,8 +23,6 @@ Route::middleware('auth:api')->group(function () {
             Route::post('/', [CourseController::class, 'store']);
             // 编辑课程
             Route::put('/{course}', [CourseController::class, 'update']);
-            // 关联学生到课程
-            Route::post('/{course}/attach-students', [CourseController::class, 'attachStudents']);
             // 获取课程列表
             Route::get('/teacher-courses', [CourseController::class, 'teacherCourses']);
             // 获取课程详情
@@ -45,7 +43,7 @@ Route::middleware('auth:api')->group(function () {
             // 创建账单
             Route::post('/', [InvoiceController::class, 'store']);
             // 发送账单
-            Route::post('/{invoice}/send', [InvoiceController::class, 'send']);
+            Route::post('/{course}/send', [InvoiceController::class, 'send']);
             // 获取老师账单列表
             Route::get('/teacher-invoices', [InvoiceController::class, 'teacherInvoices']);
         });

@@ -38,23 +38,12 @@ class InvoiceControllerTest extends TestCase
 
         $response = $this->postJson('/api/invoices', [
             'course_id' => $this->course->id,
-            'student_id' => $this->student->id
+            'student_ids' => [$this->student->id]
         ]);
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('message', '账单创建成功')
-            ->assertJsonStructure([
-                'data' => [
-                    'id',
-                    'course_id',
-                    'student_id',
-                    'amount',
-                    'status',
-                    'course' => ['id', 'name'],
-                    'student' => ['id', 'name']
-                ]
-            ]);
+            ->assertJsonPath('message', '账单创建成功');
 
         $this->assertDatabaseHas('invoices', [
             'course_id' => $this->course->id,
@@ -76,7 +65,7 @@ class InvoiceControllerTest extends TestCase
 
         $response = $this->postJson('/api/invoices', [
             'course_id' => $otherCourse->id,
-            'student_id' => $this->student->id,
+            'student_ids' => [$this->student->id],
         ]);
 
         $response->assertStatus(403)
@@ -96,7 +85,9 @@ class InvoiceControllerTest extends TestCase
             'status' => Invoice::STATUS_PENDING
         ]);
 
-        $response = $this->postJson("/api/invoices/{$invoice->id}/send");
+        $response = $this->postJson("/api/invoices/{$this->course->id}/send", [
+            'student_ids' => [$this->student->id]
+        ]);
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
@@ -118,13 +109,9 @@ class InvoiceControllerTest extends TestCase
 
         Passport::actingAs($this->teacher);
 
-        $invoice = Invoice::factory()->create([
-            'course_id' => $otherCourse->id,
-            'student_id' => $this->student->id,
-            'status' => Invoice::STATUS_PENDING
+        $response = $this->postJson("/api/invoices/{$otherCourse->id}/send", [
+            'student_ids' => [$this->student->id]
         ]);
-
-        $response = $this->postJson("/api/invoices/{$invoice->id}/send");
 
         $response->assertStatus(403)
             ->assertJsonPath('message', '您只能发送自己课程的账单');
@@ -140,14 +127,16 @@ class InvoiceControllerTest extends TestCase
         // 创建3个账单
         Invoice::factory()->count(3)->create([
             'course_id' => $this->course->id,
-            'student_id' => $this->student->id
+            'student_id' => $this->student->id,
+            'sent_at' => now()
         ]);
 
         // 创建一个其他学生的账单
         $otherStudent = User::factory()->create(['role' => User::ROLE_STUDENT]);
         Invoice::factory()->create([
             'course_id' => $this->course->id,
-            'student_id' => $otherStudent->id
+            'student_id' => $otherStudent->id,
+            'sent_at' => now()
         ]);
 
         $response = $this->getJson('/api/invoices/student-invoices');
@@ -188,13 +177,15 @@ class InvoiceControllerTest extends TestCase
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'status' => Invoice::STATUS_PENDING
+            'status' => Invoice::STATUS_PENDING,
+            'sent_at' => now()
         ]);
 
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'status' => Invoice::STATUS_PAID
+            'status' => Invoice::STATUS_PAID,
+            'sent_at' => now()
         ]);
 
         $response = $this->getJson('/api/invoices/student-invoices?status=pending');
@@ -219,7 +210,8 @@ class InvoiceControllerTest extends TestCase
         ]);
         Invoice::factory()->count(2)->create([
             'course_id' => $mathCourse->id,
-            'student_id' => $this->student->id
+            'student_id' => $this->student->id,
+            'sent_at' => now()
         ]);
 
         // 创建英语课程的账单
@@ -229,7 +221,8 @@ class InvoiceControllerTest extends TestCase
         ]);
         Invoice::factory()->create([
             'course_id' => $englishCourse->id,
-            'student_id' => $this->student->id
+            'student_id' => $this->student->id,
+            'sent_at' => now()
         ]);
 
         $response = $this->getJson('/api/invoices/student-invoices?keyword=数学');
@@ -255,7 +248,8 @@ class InvoiceControllerTest extends TestCase
         ]);
         Invoice::factory()->count(2)->create([
             'course_id' => $marchCourse->id,
-            'student_id' => $this->student->id
+            'student_id' => $this->student->id,
+            'sent_at' => now()
         ]);
 
         // 创建2024-04的课程账单
@@ -265,7 +259,8 @@ class InvoiceControllerTest extends TestCase
         ]);
         Invoice::factory()->create([
             'course_id' => $aprilCourse->id,
-            'student_id' => $this->student->id
+            'student_id' => $this->student->id,
+            'sent_at' => now()
         ]);
 
         $response = $this->getJson('/api/invoices/student-invoices?year_month=2024-03');
@@ -288,21 +283,21 @@ class InvoiceControllerTest extends TestCase
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'created_at' => '2024-03-01 10:00:00'
+            'sent_at' => '2024-03-01 10:00:00'
         ]);
 
         // 创建一个较晚的账单
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'created_at' => '2024-03-15 10:00:00'
+            'sent_at' => '2024-03-15 10:00:00'
         ]);
 
         // 创建一个更晚的账单
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'created_at' => '2024-03-31 10:00:00'
+            'sent_at' => '2024-03-31 10:00:00'
         ]);
 
         $response = $this->getJson('/api/invoices/student-invoices?send_start=2024-03-10&send_end=2024-03-20');
@@ -323,7 +318,8 @@ class InvoiceControllerTest extends TestCase
         $invoice = Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
-            'status' => Invoice::STATUS_PENDING
+            'status' => Invoice::STATUS_PENDING,
+            'sent_at' => now()
         ]);
 
         $response = $this->getJson("/api/invoices/student-invoices/{$invoice->id}");

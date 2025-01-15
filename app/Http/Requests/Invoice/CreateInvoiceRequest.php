@@ -11,7 +11,8 @@ class CreateInvoiceRequest extends FormRequest
     {
         return [
             'course_id' => 'required|exists:courses,id',
-            'student_id' => 'required|exists:users,id,role,' . User::ROLE_STUDENT,
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'required|exists:users,id,role,' . User::ROLE_STUDENT,
         ];
     }
 
@@ -20,8 +21,10 @@ class CreateInvoiceRequest extends FormRequest
         return [
             'course_id.required' => '课程不能为空',
             'course_id.exists' => '课程不存在',
-            'student_id.required' => '学生不能为空',
-            'student_id.exists' => '学生不存在或不是学生身份',
+            'student_ids.required' => '学生不能为空',
+            'student_ids.array' => '学生必须是一个数组',
+            'student_ids.*.required' => '学生不能为空',
+            'student_ids.*.exists' => '学生不存在或不是学生身份',
         ];
     }
 }

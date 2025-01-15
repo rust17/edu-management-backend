@@ -53,26 +53,6 @@ class CourseController extends Controller
     }
 
     /**
-     * 关联学生
-     *
-     * @param AttachStudentsRequest $request
-     * @param Course $course
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function attachStudents(AttachStudentsRequest $request, Course $course)
-    {
-        // 只关联新的学生
-        if ($newStudentIds = collect($request->student_ids)
-            ->diff($course->students->pluck('id'))
-            ->toArray()
-        ) {
-            $course->students()->attach($newStudentIds);
-        }
-
-        return $this->success('课程学生设置成功');
-    }
-
-    /**
      * 获取学生的课程列表
      *
      * @param ListMyCourseRequest $request

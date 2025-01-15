@@ -12,14 +12,14 @@ class SendInvoiceRequest extends FormRequest
 
     public function authorize(): bool
     {
-        $invoice = $this->route('invoice');
-        if ($invoice->status !== Invoice::STATUS_PENDING) {
-            $this->errorMessage = '只能发送待处理的账单';
-            return false;
-        }
+        $course = $this->route('course');
+        // if ($course->status !== Course::STATUS_PENDING) {
+        //     $this->errorMessage = '只能发送待处理的账单';
+        //     return false;
+        // }
 
         // 验证是否是该教师的课程的账单
-        if (!$this->user()->teacherCourses()->where('id', $invoice->course_id)->exists()) {
+        if ($course->teacher_id !== $this->user()->id) {
             $this->errorMessage = '您只能发送自己课程的账单';
             return false;
         }
@@ -29,6 +29,19 @@ class SendInvoiceRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'required|exists:users,id',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'student_ids.required' => '学生ID不能为空',
+            'student_ids.array' => '学生ID必须是一个数组',
+            'student_ids.*.required' => '学生ID不能为空',
+            'student_ids.*.exists' => '学生ID不存在',
+        ];
     }
 }
