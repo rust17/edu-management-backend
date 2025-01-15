@@ -24,6 +24,9 @@ return new class extends Migration
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('invoice_id');
+            $table->index('student_id');
         });
     }
 

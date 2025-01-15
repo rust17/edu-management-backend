@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->enum('role', ['teacher', 'student']);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('role');
         });
     }
 

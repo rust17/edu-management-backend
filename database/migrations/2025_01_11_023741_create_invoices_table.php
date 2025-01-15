@@ -23,6 +23,9 @@ class CreateInvoicesTable extends Migration
             $table->dateTime('sent_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('course_id');
+            $table->index('student_id');
         });
     }
 

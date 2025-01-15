@@ -5,7 +5,7 @@ use App\Http\Controllers\Course\StudentController as StudentCourseController;
 use App\Http\Controllers\Course\TeacherController;
 use App\Http\Controllers\Invoice\StudentController as StudentInvoiceController;
 use App\Http\Controllers\Invoice\TeacherController as TeacherInvoiceController;
-use App\Http\Controllers\Payment\PaymentController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Route;

@@ -21,6 +21,8 @@ class CreateCoursesTable extends Migration
             $table->unsignedBigInteger('teacher_id'); // users.id
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('teacher_id');
         });
     }
 
