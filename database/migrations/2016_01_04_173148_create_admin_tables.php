@@ -21,7 +21,19 @@ class CreateAdminTables extends Migration
      */
     public function up()
     {
-        Schema::create(config('admin.database.menu_table'), function (Blueprint $table) {
+        Schema::create('admin_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('username', 190)->unique();
+            $table->string('password', 60);
+            $table->string('name');
+            $table->string('role')->nullable();
+            $table->string('avatar')->nullable();
+            $table->string('remember_token', 100)->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('admin_menu', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('parent_id')->default(0);
             $table->integer('order')->default(0);
@@ -33,7 +45,7 @@ class CreateAdminTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create(config('admin.database.operation_log_table'), function (Blueprint $table) {
+        Schema::create('admin_operation_log', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
             $table->string('path');
@@ -52,7 +64,8 @@ class CreateAdminTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(config('admin.database.menu_table'));
-        Schema::dropIfExists(config('admin.database.operation_log_table'));
+        Schema::dropIfExists('admin_users');
+        Schema::dropIfExists('admin_menu');
+        Schema::dropIfExists('admin_operation_log');
     }
 }
