@@ -15,8 +15,9 @@ class Payment extends Model
         'transaction_no', 'transaction_fee', 'amount', 'status', 'paid_at'
     ];
 
-    protected $casts = [
-        'paid_at' => 'datetime',
+    protected $dates = [
+        'paid_at',
+        'deleted_at'
     ];
 
     const STATUS_SUCCESS = 'success';

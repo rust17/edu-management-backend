@@ -105,11 +105,11 @@ class CourseService
      */
     public function getStudentCoursesQuery(int $studentId, array $filters): Builder
     {
-        $query = Course::whereHas('students', function ($query) use ($studentId) {
-            $query->where('users.id', $studentId);
-        })->with(['teacher:id,name', 'invoices' =>
-            fn ($query) => $query->where('student_id', $studentId)
-        ])->latest('id');
+        $query = Course::whereHas('students', fn ($query) => $query->where('users.id', $studentId))
+            ->with([
+                'teacher:id,name',
+                'invoices' => fn ($query) => $query->where('student_id', $studentId)
+            ])->latest('id');
 
         if (!empty($filters['keyword'])) {
             $query->where('name', 'like', '%' . $filters['keyword'] . '%');

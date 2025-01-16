@@ -98,13 +98,15 @@ class StatisticsControllerTest extends TestCase
             Invoice::factory()->create([
                 'course_id' => $course->id,
                 'student_id' => $student->id,
-                'status' => Invoice::STATUS_PENDING
+                'status' => Invoice::STATUS_PENDING,
+                'sent_at' => now()
             ]);
         });
         Invoice::factory()->create([
             'course_id' => $courses->last()->id,
             'student_id' => $student->id,
-            'status' => Invoice::STATUS_PAID
+            'status' => Invoice::STATUS_PAID,
+            'sent_at' => now()
         ]);
 
         // 创建其他学生的课程和账单

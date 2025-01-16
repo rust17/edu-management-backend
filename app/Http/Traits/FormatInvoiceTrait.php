@@ -21,7 +21,7 @@ trait FormatInvoiceTrait
         ]) + [
             'no' => $invoice->no,
             'send_at' => $invoice->sent_at,
-            'paid_at' => '', //todo
+            'paid_at' => $invoice->payment?->paid_at,
             'course' => [
                 'id' => $invoice->course->id,
                 'name' => $invoice->course->name,
@@ -45,7 +45,7 @@ trait FormatInvoiceTrait
                     'id', 'course_id', 'student_id', 'amount', 'status'
                 ]) + [
                     'send_at' => $invoice->sent_at,
-                    'paid_at' => '', //todo
+                    'paid_at' => $invoice->payment?->paid_at,
                     'course' => $invoice->course->only(['id', 'name']) + [
                         'year_month' => $invoice->course->year_month->format('Y-m')
                     ],
@@ -69,7 +69,7 @@ trait FormatInvoiceTrait
                     'id', 'course_id', 'student_id', 'amount', 'status'
                 ]) + [
                     'send_at' => $invoice->sent_at,
-                    'paid_at' => '', //todo
+                    'paid_at' => $invoice->payment?->paid_at,
                     'course' => $invoice->course->only(['id', 'name']) + [
                         'year_month' => $invoice->course->year_month->format('Y-m')
                     ]

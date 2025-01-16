@@ -84,7 +84,7 @@ class InvoiceService
      */
     public function getTeacherInvoicesQuery(int $teacherId, array $filters): Builder
     {
-        $query = Invoice::with(['student', 'course'])
+        $query = Invoice::with(['student', 'course', 'payment'])
             ->whereHas('course', fn ($query) => $query->where('teacher_id', $teacherId))
             ->latest('id');
 
@@ -128,7 +128,7 @@ class InvoiceService
     {
         $query = Invoice::where('student_id', $studentId)
             ->whereNotNull('sent_at') // 老师发送账单后，学生才能看到
-            ->with(['course'])
+            ->with(['course', 'payment'])
             ->latest('id');
 
         // 按状态筛选

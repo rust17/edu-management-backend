@@ -22,7 +22,7 @@ trait FormatCourseTrait
             'students' => $course->students->map(fn ($student) => [
                 'id' => $student->id,
                 'name' => $student->name,
-                'invoice_status' => $student->invoices->first()?->status
+                'invoice_status' => $course->invoices->where('student_id', $student->id)->first()?->status
             ])
         ];
     }
@@ -35,7 +35,7 @@ trait FormatCourseTrait
      */
     public function formatStudentCourseDetail(Course $course): array
     {
-        $invoice = $course->invoices->first();
+        $invoice = $course->invoices->where('student_id', auth()->id())->first();
 
         return $course->only([
             'id', 'name', 'fee', 'teacher_id'
@@ -43,10 +43,10 @@ trait FormatCourseTrait
             'year_month' => $course->year_month->format('Y-m'),
             'teacher' => $course->teacher->only(['id', 'name']),
             'invoice_status' => $invoice?->status,
-            'invoice_send_at' => $invoice?->created_at?->format('Y-m-d H:i:s'),
+            'invoice_send_at' => $invoice?->sent_at,
             'invoice_id' => $invoice?->id,
             'invoice_no' => $invoice?->no,
-            'paid_at' => ''
+            'paid_at' => $invoice?->payment?->paid_at
         ];
     }
 
@@ -80,20 +80,21 @@ trait FormatCourseTrait
      */
     public function formatStudentCoursesList(LengthAwarePaginator $courses): LengthAwarePaginator
     {
+        $studentId = auth()->id();
         return $courses->tap(
             fn (LengthAwarePaginator $courses) => $courses->transform(
-                function (Course $course) {
-                    $invoice = $course->invoices->first();
+                function (Course $course) use ($studentId) {
+                    $invoice = $course->invoices->where('student_id', $studentId)->first();
                     return $course->only([
                         'id', 'name', 'fee', 'teacher_id'
                     ]) + [
                         'teacher' => $course->teacher->only(['id', 'name']),
                         'year_month' => $course->year_month->format('Y-m'),
                         'invoice_status' => $invoice?->status,
-                        'invoice_send_at' => $invoice?->created_at->format('Y-m-d H:i:s'),
+                        'invoice_send_at' => $invoice?->sent_at,
                         'invoice_id' => $invoice?->id,
                         'invoice_no' => $invoice?->no,
-                        'paid_at' => '' //todo
+                        'paid_at' => ''
                     ];
                 }
             )
