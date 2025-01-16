@@ -40,8 +40,8 @@
 
 ## 环境要求
 
-- PHP >= 8.1
-- MySQL >= 5.7
+- PHP >= 8.2
+- PostgreSQL >= 13
 - Composer
 - Redis (可选，用于缓存)
 
@@ -66,9 +66,9 @@ php artisan key:generate
 
 4. **配置数据库**
 ```env
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
-DB_PORT=3306
+DB_PORT=5432
 DB_DATABASE=your_database
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
@@ -107,6 +107,78 @@ php artisan route:cache
 ```env
 OMISE_PUBLIC_KEY=your_public_key
 OMISE_SECRET_KEY=your_secret_key
+```
+
+## Docker 部署
+
+1. **配置数据库连接**
+首先确保您有可用的 PostgreSQL 云数据库服务，并在 .env 文件中正确配置数据库连接信息：
+```env
+DB_CONNECTION=pgsql
+DB_HOST=your-postgres-host.cloud-provider.com
+DB_PORT=5432
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+2. **构建镜像**
+```bash
+docker build -t edu-management-api .
+```
+
+3. **运行容器**
+首次部署：
+```bash
+docker run -d \
+    --name edu-api \
+    -p 8080:80 \
+    -v $(pwd)/.env:/var/www/html/.env \
+    -e FORCE_MIGRATION=true \    <------- 需要运行迁移
+    -e PASSPORT_INSTALLED=true \ <------- 需要安装 Passport
+    edu-management-api
+```
+
+后续部署：
+```bash
+docker run -d \
+    --name edu-api \
+    -p 8080:80 \
+    -v $(pwd)/.env:/var/www/html/.env \
+    edu-management-api
+```
+
+4. **访问服务**
+服务将在 http://localhost:8080 上运行。
+
+5. **查看初始化日志**
+```bash
+docker logs edu-api
+```
+
+### 部署说明
+
+- 通过设置 `FORCE_MIGRATION=true`、`PASSPORT_INSTALLED=true` 环境变量来运行数据库迁移和 Passport 安装
+- 初始化脚本会自动检查数据库连接并等待数据库就绪
+- 可以通过查看容器日志来监控初始化过程
+
+### 故障排查
+
+如果遇到初始化问题，可以：
+
+1. 检查数据库连接配置
+```bash
+docker exec edu-api php artisan db:monitor
+```
+
+2. 手动运行迁移
+```bash
+docker exec edu-api php artisan migrate
+```
+
+3. 手动安装 Passport
+```bash
+docker exec edu-api php artisan passport:install
 ```
 
 ## License
