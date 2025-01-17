@@ -79,7 +79,7 @@ DB_PASSWORD=your_password
 php artisan migrate
 ```
 
-6. **配置 Passport**
+6. **配置 Passport（可选）**
 ```bash
 php artisan passport:install
 ```
@@ -111,47 +111,32 @@ OMISE_SECRET_KEY=your_secret_key
 
 ## Docker 部署
 
-1. **配置数据库连接**
-首先确保您有可用的 PostgreSQL 云数据库服务，并在 .env 文件中正确配置数据库连接信息：
-```env
-DB_CONNECTION=pgsql
-DB_HOST=your-postgres-host.cloud-provider.com
-DB_PORT=5432
-DB_DATABASE=your_database
-DB_USERNAME=your_username
-DB_PASSWORD=your_password
-```
-
-2. **构建镜像**
+1. **构建镜像**
 ```bash
 docker build -t edu-management-api .
 ```
 
-3. **运行容器**
-首次部署：
+2. **运行容器**
+部署：
 ```bash
 docker run -d \
     --name edu-api \
     -p 8080:80 \
-    -v $(pwd)/.env:/var/www/html/.env \
-    -e FORCE_MIGRATION=true \    <------- 需要运行迁移
-    -e PASSPORT_INSTALLED=true \ <------- 需要安装 Passport
+    -v $(pwd)/.env:/var/www/html/.env \ <------- 可以通过挂载 .env 文件提供 Laravel 所需的环境变量
+    -e FORCE_MIGRATION=true \           <------- 如果需要运行迁移
+    -e PASSPORT_INSTALLED=true \        <------- 如果需要安装 Passport
+    -e APP_NAME={APP_NAME}              <------- 也可以通过 -e 提供环境变量
+    -e APP_KEY={APP_KEY}                <------- 也可以通过 -e 提供环境变量
+    -e APP_ENV=production               <------- 也可以通过 -e 提供环境变量
+    -e APP_DEBUG=false                  <------- 也可以通过 -e 提供环境变量
+    -e 你的环境变量...
     edu-management-api
 ```
 
-后续部署：
-```bash
-docker run -d \
-    --name edu-api \
-    -p 8080:80 \
-    -v $(pwd)/.env:/var/www/html/.env \
-    edu-management-api
-```
-
-4. **访问服务**
+3. **访问服务**
 服务将在 http://localhost:8080 上运行。
 
-5. **查看初始化日志**
+4. **查看初始化日志**
 ```bash
 docker logs edu-api
 ```
@@ -159,6 +144,7 @@ docker logs edu-api
 ### 部署说明
 
 - 通过设置 `FORCE_MIGRATION=true`、`PASSPORT_INSTALLED=true` 环境变量来运行数据库迁移和 Passport 安装
+- 既可以通过挂载 `.env` 文件来提供环境变量，也可以通过 docker 的 `-e` 参数来提供环境变量，这些环境变量会覆盖 `.env` 文件中的配置
 - 初始化脚本会自动检查数据库连接并等待数据库就绪
 - 可以通过查看容器日志来监控初始化过程
 

@@ -6,6 +6,9 @@ while ! php artisan db:monitor > /dev/null 2>&1; do
     sleep 1
 done
 
+php artisan config:cache
+php artisan route:cache
+
 # 检查是否需要运行迁移
 php artisan migrate:status | grep "No migrations found" > /dev/null 2>&1
 NEED_MIGRATION=$?
