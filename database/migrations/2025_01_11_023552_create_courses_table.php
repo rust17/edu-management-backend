@@ -16,8 +16,8 @@ class CreateCoursesTable extends Migration
         Schema::create('courses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->date('year_month'); // 存储年月
-            $table->decimal('fee', 10, 2); // 课程费用，10位数字，2位小数
+            $table->date('year_month'); // Store year and month
+            $table->decimal('fee', 10, 2); // Course fee, 10 digits, 2 decimal places
             $table->unsignedBigInteger('teacher_id'); // users.id
             $table->timestamps();
             $table->softDeletes();

@@ -20,7 +20,7 @@ abstract class PaymentTestCase extends TestCase
     {
         parent::setUp();
 
-        // 创建测试数据
+        // Create test data
         $this->student = User::factory()->create(['role' => User::ROLE_STUDENT]);
         $teacher = User::factory()->create(['role' => User::ROLE_TEACHER]);
 

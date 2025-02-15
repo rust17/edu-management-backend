@@ -25,19 +25,19 @@ class Course extends Model
         'year_month' => 'date',
     ];
 
-    // 获取课程的教师
+    // Get the teacher of the course
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
     }
 
-    // 获取参加该课程的所有学生
+    // Get all students attending the course
     public function students()
     {
         return $this->belongsToMany(User::class, 'course_students', 'course_id', 'student_id');
     }
 
-    // 获取该课程的所有发票
+    // Get all invoices for the course
     public function invoices()
     {
         return $this->hasMany(Invoice::class);

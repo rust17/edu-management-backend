@@ -12,7 +12,7 @@ use App\Enums\Business;
 class AuthController extends Controller
 {
     /**
-     * 登录
+     * Login
      *
      * @param AuthRequest $request
      * @return \Illuminate\Http\JsonResponse
@@ -24,10 +24,10 @@ class AuthController extends Controller
             ->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->error('用户名或密码错误', Business::LOGIN_FAILED->value, 401);
+            return $this->error('Incorrect username or password', Business::LOGIN_FAILED->value, 401);
         }
 
-        return $this->success('登录成功', [
+        return $this->success('Login successful', [
             'access_token' => $user->createToken('auth_token')->accessToken,
             'token_type' => 'Bearer',
             'user' => $user->only(['id', 'name', 'email', 'role'])
@@ -35,7 +35,7 @@ class AuthController extends Controller
     }
 
     /**
-     * 登出
+     * Logout
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -44,6 +44,6 @@ class AuthController extends Controller
     {
         $request->user()->token()->revoke();
 
-        return $this->success('已成功登出');
+        return $this->success('Logged out successfully');
     }
 }

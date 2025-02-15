@@ -37,14 +37,14 @@ class UpdateCourseRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => '课程名称不能为空',
-            'year_month.required' => '年月不能为空',
-            'year_month.date_format' => '年月格式必须为 YYYY-MM',
-            'fee.required' => '课程费用不能为空',
-            'fee.numeric' => '课程费用必须为数字',
-            'fee.min' => '课程费用不能小于0',
-            'student_ids.array' => '学生ID必须为数组',
-            'student_ids.*.exists' => '选择的学生不存在或不是学生身份',
+            'name.required' => 'Course name cannot be empty',
+            'year_month.required' => 'Year and month cannot be empty',
+            'year_month.date_format' => 'Year and month format must be YYYY-MM',
+            'fee.required' => 'Course fee cannot be empty',
+            'fee.numeric' => 'Course fee must be a number',
+            'fee.min' => 'Course fee cannot be less than 0',
+            'student_ids.array' => 'Student ID must be an array',
+            'student_ids.*.exists' => 'The selected student does not exist or is not a student',
         ];
     }
 }

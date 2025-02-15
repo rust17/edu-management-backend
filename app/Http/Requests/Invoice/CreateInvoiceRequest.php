@@ -19,12 +19,12 @@ class CreateInvoiceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'course_id.required' => '课程不能为空',
-            'course_id.exists' => '课程不存在',
-            'student_ids.required' => '学生不能为空',
-            'student_ids.array' => '学生必须是一个数组',
-            'student_ids.*.required' => '学生不能为空',
-            'student_ids.*.exists' => '学生不存在或不是学生身份',
+            'course_id.required' => 'Course cannot be empty',
+            'course_id.exists' => 'Course does not exist',
+            'student_ids.required' => 'Student cannot be empty',
+            'student_ids.array' => 'Student must be an array',
+            'student_ids.*.required' => 'Student cannot be empty',
+            'student_ids.*.exists' => 'Student does not exist or is not a student',
         ];
     }
 }

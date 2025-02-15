@@ -10,65 +10,65 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\StatisticsController;
 use Illuminate\Support\Facades\Route;
 
-// 登录
+// Login
 Route::post('/login', [AuthController::class, 'login']);
 
-// 需要认证的路由
+// Authenticated routes
 Route::middleware('auth:api')->group(function () {
-    // 登出
+    // Logout
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // 课程
+    // Courses
     Route::prefix('courses')->group(function () {
         Route::middleware('role:teacher')->group(function () {
-            // 创建课程
+            // Create a course
             Route::post('/', [TeacherController::class, 'store']);
-            // 编辑课程
+            // Update a course
             Route::put('/{course}', [TeacherController::class, 'update']);
-            // 获取课程列表
+            // Get teacher's course list
             Route::get('/teacher-courses', [TeacherController::class, 'teacherCourses']);
-            // 获取课程详情
+            // Get course details
             Route::get('/teacher-courses/{course}', [TeacherController::class, 'teacherCourse']);
         });
 
         Route::middleware('role:student')->group(function () {
-            // 查看我的课程
+            // View my courses
             Route::get('/student-courses', [StudentCourseController::class, 'studentCourses']);
-            // 查看我的课程详情
+            // View my course details
             Route::get('/student-courses/{course}', [StudentCourseController::class, 'studentCourse']);
         });
     });
 
-    // 账单
+    // Invoices
     Route::prefix('invoices')->group(function () {
         Route::middleware('role:teacher')->group(function () {
-            // 创建账单
+            // Create an invoice
             Route::post('/', [TeacherInvoiceController::class, 'store']);
-            // 发送账单
+            // Send an invoice
             Route::post('/{course}/send', [TeacherInvoiceController::class, 'send']);
-            // 获取老师账单列表
+            // Get teacher's invoice list
             Route::get('/teacher-invoices', [TeacherInvoiceController::class, 'teacherInvoices']);
         });
 
         Route::middleware('role:student')->group(function () {
-            // 获取学生的账单列表
+            // Get student's invoice list
             Route::get('/student-invoices', [StudentInvoiceController::class, 'studentInvoices']);
-            // 获取学生的账单详情
+            // Get student's invoice details
             Route::get('/student-invoices/{invoice}', [StudentInvoiceController::class, 'studentInvoice']);
         });
     });
 
-    // 获取老师的学生列表
+    // Get teacher's student list
     Route::middleware('role:teacher')->get('/students', [StudentController::class, 'index']);
 
-    // 获取老师的统计信息
+    // Get teacher's statistics
     Route::middleware('role:teacher')->get('/teacher-statistics', [StatisticsController::class, 'teacherStatistics']);
 
-    // 获取学生的统计信息
+    // Get student's statistics
     Route::middleware('role:student')->get('/student-statistics', [StatisticsController::class, 'studentStatistics']);
 
     Route::prefix('payments')->group(function () {
-        // omise 信用卡支付
+        // Omise credit card payment
         Route::middleware('role:student')->post('omise-card', [PaymentController::class, 'omisePay']);
     });
 });

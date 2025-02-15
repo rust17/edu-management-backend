@@ -7,7 +7,7 @@ use App\Services\Payment\Strategies\OmisePaymentStrategy;
 class PaymentHandlerFactory
 {
     /**
-     * 创建支付处理器
+     * Create payment handler
      *
      * @param string $platform
      * @return AbstractPaymentHandler

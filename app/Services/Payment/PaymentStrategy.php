@@ -7,7 +7,7 @@ use App\Models\Invoice;
 interface PaymentStrategy
 {
     /**
-     * 处理支付
+     * Handle payment
      *
      * @param Invoice $invoice
      * @param array $params
@@ -16,14 +16,14 @@ interface PaymentStrategy
     public function pay(Invoice $invoice, array $params): array;
 
     /**
-     * 获取支付平台标识
+     * Get payment platform identifier
      *
      * @return string
      */
     public function getPlatform(): string;
 
     /**
-     * 获取支付方式
+     * Get payment method
      *
      * @return string
      */

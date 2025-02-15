@@ -22,17 +22,17 @@ class TeacherController extends Controller
     }
 
     /**
-     * 创建课程
+     * Create a course
      */
     public function store(CreateCourseRequest $request)
     {
         $course = $this->courseService->create($request->validated(), $request->user()->id);
 
-        return $this->success('课程创建成功', $this->formatTeacherCourseDetail($course));
+        return $this->success('Course created successfully', $this->formatTeacherCourseDetail($course));
     }
 
     /**
-     * 获取教师的课程列表
+     * Get the teacher's course list
      */
     public function teacherCourses(Request $request)
     {
@@ -40,32 +40,32 @@ class TeacherController extends Controller
             ->getTeacherCoursesQuery($request->user()->id, $request->all())
             ->paginate($request->input('per_page', 15));
 
-        return $this->success('获取成功', $this->formatTeacherCoursesList($courses));
+        return $this->success('Get successfully', $this->formatTeacherCoursesList($courses));
     }
 
     /**
-     * 教师查看课程详情
+     * Teacher view course details
      */
     public function teacherCourse(Course $course)
     {
         if ($course->teacher_id !== auth()->id()) {
-            return $this->error('您只能查看自己的课程', 1, 403);
+            return $this->error('You can only view your own courses', 1, 403);
         }
 
-        return $this->success('获取成功', $this->formatTeacherCourseDetail($course));
+        return $this->success('Get successfully', $this->formatTeacherCourseDetail($course));
     }
 
     /**
-     * 编辑课程
+     * Edit course
      */
     public function update(UpdateCourseRequest $request, Course $course)
     {
         if ($course->teacher_id !== $request->user()->id) {
-            return $this->error('您只能编辑自己的课程', 1, 403);
+            return $this->error('You can only edit your own courses', 1, 403);
         }
 
         $course = $this->courseService->update($course, $request->validated());
 
-        return $this->success('课程更新成功', $this->formatTeacherCourseDetail($course));
+        return $this->success('Course updated successfully', $this->formatTeacherCourseDetail($course));
     }
 }

@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * 学生模型
- * 主要存放学生的信息，例如：年纪、专业。当资源需要频繁使用学生的特定字段时，可以与该表关联。
+ * Student Model
+ * Mainly stores student information, such as: grade, major. When resources need to frequently use specific fields of students, they can be associated with this table.
  */
 class Student extends Model
 {
@@ -20,7 +20,7 @@ class Student extends Model
     protected $dates = ['deleted_at'];
 
     /**
-     * 获取关联的用户信息
+     * Get associated user information
      */
     public function user()
     {

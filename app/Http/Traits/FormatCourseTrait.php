@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 trait FormatCourseTrait
 {
     /**
-     * 格式化课程详情（教师视图）
+     * Format course details (teacher view)
      *
      * @param Course $course
      * @return array
@@ -28,7 +28,7 @@ trait FormatCourseTrait
     }
 
     /**
-     * 格式化课程详情（学生视图）
+     * Format course details (student view)
      *
      * @param Course $course
      * @return array
@@ -51,7 +51,7 @@ trait FormatCourseTrait
     }
 
     /**
-     * 格式化教师课程列表数据
+     * Format teacher course list data
      *
      * @param LengthAwarePaginator $courses
      * @return LengthAwarePaginator
@@ -73,7 +73,7 @@ trait FormatCourseTrait
     }
 
     /**
-     * 格式化学生课程列表数据
+     * Format student course list data
      *
      * @param LengthAwarePaginator $courses
      * @return LengthAwarePaginator

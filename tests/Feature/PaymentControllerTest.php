@@ -18,6 +18,9 @@ class PaymentControllerTest extends TestCase
         $this->artisan('passport:install');
     }
 
+    /**
+     * Test Omise pay with paid invoice
+     */
     public function test_omise_pay_with_paid_invoice()
     {
         $student = User::factory()->create(['role' => 'student']);
@@ -33,7 +36,7 @@ class PaymentControllerTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJson([
-                'message' => '订单已支付'
+                'message' => 'The order has already been paid'
             ]);
     }
 }

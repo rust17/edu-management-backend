@@ -19,7 +19,7 @@ class StudentControllerTest extends TestCase
     }
 
     /**
-     * 测试学生可以查看自己的课程
+     * Test student can view own courses
      */
     public function test_student_can_view_own_courses()
     {
@@ -27,13 +27,13 @@ class StudentControllerTest extends TestCase
             'role' => User::ROLE_STUDENT
         ]);
 
-        // 创建一些课程并关联到学生
+        // Create some courses and associate to the student
         $courses = Course::factory()->count(3)->create();
         $courses->each(function ($course) use ($student) {
             $course->students()->attach($student->id);
         });
 
-        // 创建一些不属于该学生的课程
+        // Create some courses not belonging to the student
         Course::factory()->count(2)->create();
 
         $response = $this->actingAs($student, 'api')
@@ -42,7 +42,7 @@ class StudentControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'code' => 0,
-                'message' => '获取成功'
+                'message' => 'Get successfully'
             ])
             ->assertJsonCount(3, 'data.data')
             ->assertJsonStructure([
@@ -71,7 +71,7 @@ class StudentControllerTest extends TestCase
     }
 
     /**
-     * 测试教师不能使用查看我的课程接口
+     * Test teacher cannot use the view my courses interface
      */
     public function test_teacher_cannot_view_courses_as_student()
     {
@@ -85,13 +85,13 @@ class StudentControllerTest extends TestCase
         $response->assertStatus(403)
             ->assertJson([
                 'code' => 1,
-                'message' => '您没有权限执行此操作',
+                'message' => 'You do not have permission to perform this operation',
                 'data' => null
             ]);
     }
 
     /**
-     * 测试按年月筛选课程
+     * Test filter courses by year and month
      */
     public function test_student_can_filter_courses_by_year_month()
     {
@@ -99,7 +99,7 @@ class StudentControllerTest extends TestCase
             'role' => User::ROLE_STUDENT
         ]);
 
-        // 创建 2024-03 的课程
+        // Create courses for 2024-03
         $march2024Courses = Course::factory()->count(2)->create([
             'year_month' => '2024-03'
         ]);
@@ -107,7 +107,7 @@ class StudentControllerTest extends TestCase
             $course->students()->attach($student->id);
         });
 
-        // 创建 2024-04 的课程
+        // Create courses for 2024-04
         $april2024Courses = Course::factory()->count(3)->create([
             'year_month' => '2024-04'
         ]);
@@ -121,13 +121,13 @@ class StudentControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'code' => 0,
-                'message' => '获取成功'
+                'message' => 'Get successfully'
             ])
             ->assertJsonCount(2, 'data.data');
     }
 
     /**
-     * 测试按关键词筛选课程
+     * Test filter courses by keyword
      */
     public function test_student_can_filter_courses_by_keyword()
     {
@@ -135,14 +135,14 @@ class StudentControllerTest extends TestCase
             'role' => User::ROLE_STUDENT
         ]);
 
-        // 创建包含特定关键词的课程
+        // Create courses containing specific keywords
         Course::factory()->count(2)->create([
             'name' => '高等数学'
         ])->each(function ($course) use ($student) {
             $course->students()->attach($student->id);
         });
 
-        // 创建其他课程
+        // Create other courses
         Course::factory()->count(3)->create([
             'name' => '英语课程'
         ])->each(function ($course) use ($student) {
@@ -155,7 +155,7 @@ class StudentControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'code' => 0,
-                'message' => '获取成功'
+                'message' => 'Get successfully'
             ])
             ->assertJsonCount(2, 'data.data')
             ->assertJsonPath('data.data.0.name', '高等数学')
@@ -163,7 +163,7 @@ class StudentControllerTest extends TestCase
     }
 
     /**
-     * 测试学生可以查看自己已选课程的详情
+     * Test student can view the details of their selected courses
      */
     public function test_student_can_view_own_course_detail()
     {
@@ -180,7 +180,7 @@ class StudentControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'code' => 0,
-                'message' => '获取成功'
+                'message' => 'Get successfully'
             ])
             ->assertJsonStructure([
                 'data' => [
@@ -201,7 +201,7 @@ class StudentControllerTest extends TestCase
     }
 
     /**
-     * 测试学生不能查看未选课程的详情
+     * Test student cannot view details of unselected courses
      */
     public function test_student_cannot_view_unselected_course_detail()
     {
@@ -210,7 +210,7 @@ class StudentControllerTest extends TestCase
         ]);
 
         $course = Course::factory()->create();
-        // 不关联学生和课程
+        // Do not associate student and course
 
         $response = $this->actingAs($student, 'api')
             ->getJson("/api/courses/student-courses/{$course->id}");
@@ -218,7 +218,7 @@ class StudentControllerTest extends TestCase
         $response->assertStatus(403)
             ->assertJson([
                 'code' => 1,
-                'message' => '您没有权限查看该课程',
+                'message' => 'You do not have permission to view this course',
                 'data' => null
             ]);
     }

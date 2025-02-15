@@ -28,12 +28,12 @@ class AbstractPaymentHandlerTest extends PaymentTestCase
         $this->mockStrategy->shouldReceive('getMethod')
             ->andReturn(Payment::PAYMENT_METHOD_CARD);
 
-        // 创建匿名类实例
+        // Create anonymous class instance
         $this->handler = new class($this->mockStrategy) extends AbstractPaymentHandler {};
     }
 
     /**
-     * @testdox 支付成功
+     * @testdox Payment success
      */
     public function testHandleSuccess()
     {
@@ -48,9 +48,9 @@ class AbstractPaymentHandlerTest extends PaymentTestCase
         $result = $this->handler->handle($this->invoice, ['token' => 'tok_test_123']);
 
         $this->assertTrue($result['success']);
-        $this->assertEquals('支付成功', $result['message']);
+        $this->assertEquals('Payment successful', $result['message']);
 
-        // 验证数据库更新
+        // Verify database update
         $this->assertEquals(Invoice::STATUS_PAID, $this->invoice->fresh()->status);
 
         $payment = Payment::where('invoice_id', $this->invoice->id)->first();
@@ -60,26 +60,26 @@ class AbstractPaymentHandlerTest extends PaymentTestCase
     }
 
     /**
-     * @testdox 支付失败
+     * @testdox Payment failure
      */
     public function testHandlePaymentFailure()
     {
         $this->mockStrategy->shouldReceive('pay')
             ->once()
-            ->andThrow(new Exception('支付失败，余额不足'));
+            ->andThrow(new Exception('Payment failed, insufficient balance'));
 
         $result = $this->handler->handle($this->invoice, ['token' => 'tok_test_123']);
 
         $this->assertFalse($result['success']);
-        $this->assertEquals('支付失败，余额不足', $result['message']);
+        $this->assertEquals('Payment failed, insufficient balance', $result['message']);
 
-        // 验证数据库未更新
+        // Verify database not updated
         $this->assertEquals(Invoice::STATUS_PENDING, $this->invoice->fresh()->status);
         $this->assertEquals(0, Payment::where('invoice_id', $this->invoice->id)->count());
     }
 
     /**
-     * @testdox 更新状态失败
+     * @testdox Update status failure
      */
     public function testHandleUpdateStatusFailure()
     {
@@ -93,20 +93,20 @@ class AbstractPaymentHandlerTest extends PaymentTestCase
                 'transaction_fee' => 30
             ]);
 
-        // 模拟数据库错误
+        // Simulate database error
         DB::shouldReceive('beginTransaction')->once();
         DB::shouldReceive('rollBack')->once();
         DB::shouldReceive('commit')->never();
 
         $invoice->shouldReceive('update')->once()->andThrow(new Exception('Database error'));
 
-        // 验证错误日志
+        // Verify error logging
         Log::shouldReceive('error')->once()->with(Mockery::pattern('/^pay-error-update-invoice-status/'));
 
         /** @var Invoice $invoice */
         $result = $this->handler->handle($invoice, ['token' => 'tok_test_123']);
 
         $this->assertFalse($result['success']);
-        $this->assertEquals('您已支付成功，但是更新状态失败，请联系管理员', $result['message']);
+        $this->assertEquals('You have successfully paid, but the update status failed, please contact the administrator', $result['message']);
     }
 }

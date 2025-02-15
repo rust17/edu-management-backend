@@ -15,13 +15,13 @@ class CheckRole
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  string  $roles 以英文逗号分隔的角色
+     * @param  string  $roles Roles separated by commas
      * @return mixed
      */
     public function handle(Request $request, Closure $next, string $roles)
     {
         if (!in_array($request->user()->role, explode(',', $roles))) {
-            return $this->error('您没有权限执行此操作', 1, 403);
+            return $this->error('You do not have permission to perform this operation', 1, 403);
         }
 
         return $next($request);

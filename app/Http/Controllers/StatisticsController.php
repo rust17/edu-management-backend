@@ -10,45 +10,45 @@ use Illuminate\Http\Request;
 class StatisticsController extends Controller
 {
     /**
-     * 获取教师的统计信息
+     * Get teacher's statistics
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function teacherStatistics(Request $request)
     {
-        // 获取当前教师的课程数
+        // Get the number of courses of the current teacher
         $courseCount = Course::where('teacher_id', $request->user()->id)->count();
 
-        // 获取当前教师所有课程的账单总数
+        // Get the total number of invoices for all courses of the current teacher
         $invoiceCount = Invoice::whereHas('course',
             fn ($query) => $query->where('teacher_id', $request->user()->id)
         )->count();
 
-        return $this->success('获取成功', [
+        return $this->success('Get successfully', [
             'course_count' => $courseCount,
             'invoice_count' => $invoiceCount
         ]);
     }
 
     /**
-     * 获取学生的统计信息
+     * Get student statistics
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function studentStatistics(Request $request)
     {
-        // 获取当前学生的课程数
+        // Get the number of courses for the current student
         $courseCount = $request->user()->studentCourses()->count();
 
-        // 获取当前学生的待支付账单数
+        // Get the number of pending invoices for the current student
         $pendingInvoiceCount = Invoice::where('student_id', $request->user()->id)
-            ->whereNotNull('sent_at') // 老师发送账单后，学生才能看到
+            ->whereNotNull('sent_at') // After the teacher sends the invoice, the student can see it
             ->where('status', Invoice::STATUS_PENDING)
             ->count();
 
-        return $this->success('获取成功', [
+        return $this->success('Get successfully', [
             'course_count' => $courseCount,
             'pending_invoice_count' => $pendingInvoiceCount
         ]);

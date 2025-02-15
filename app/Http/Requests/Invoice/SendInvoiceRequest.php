@@ -14,13 +14,13 @@ class SendInvoiceRequest extends FormRequest
     {
         $course = $this->route('course');
         // if ($course->status !== Course::STATUS_PENDING) {
-        //     $this->errorMessage = '只能发送待处理的账单';
+        //     $this->errorMessage = 'Only pending invoices can be sent';
         //     return false;
         // }
 
-        // 验证是否是该教师的课程的账单
+        // Verify that it is the invoice of the teacher's course
         if ($course->teacher_id !== $this->user()->id) {
-            $this->errorMessage = '您只能发送自己课程的账单';
+            $this->errorMessage = 'You can only send invoices for your own courses';
             return false;
         }
 
@@ -38,10 +38,10 @@ class SendInvoiceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'student_ids.required' => '学生ID不能为空',
-            'student_ids.array' => '学生ID必须是一个数组',
-            'student_ids.*.required' => '学生ID不能为空',
-            'student_ids.*.exists' => '学生ID不存在',
+            'student_ids.required' => 'Student ID cannot be empty',
+            'student_ids.array' => 'Student ID must be an array',
+            'student_ids.*.required' => 'Student ID cannot be empty',
+            'student_ids.*.exists' => 'Student ID does not exist',
         ];
     }
 }

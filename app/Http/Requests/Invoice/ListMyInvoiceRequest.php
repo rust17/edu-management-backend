@@ -22,16 +22,16 @@ class ListMyInvoiceRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'status.in' => '状态必须是 pending、paid 或 failed',
-            'page.integer' => '页码必须为整数',
-            'page.min' => '页码不能小于1',
-            'per_page.integer' => '每页数量必须为整数',
-            'per_page.min' => '每页数量不能小于1',
-            'per_page.max' => '每页数量不能大于100',
-            'keyword.string' => '关键词必须是字符串',
-            'year_month.date_format' => '年月必须是 Y-m 格式',
-            'send_start.date_format' => '发送开始时间必须是 Y-m-d 格式',
-            'send_end.date_format' => '发送结束时间必须是 Y-m-d 格式',
+            'status.in' => 'Status must be pending, paid or failed',
+            'page.integer' => 'Page number must be an integer',
+            'page.min' => 'Page number cannot be less than 1',
+            'per_page.integer' => 'The number per page must be an integer',
+            'per_page.min' => 'The number per page cannot be less than 1',
+            'per_page.max' => 'The number per page cannot be greater than 100',
+            'keyword.string' => 'Keyword must be a string',
+            'year_month.date_format' => 'Year and month must be in Y-m format',
+            'send_start.date_format' => 'Send start time must be in Y-m-d format',
+            'send_end.date_format' => 'Send end time must be in Y-m-d format',
         ];
     }
 }

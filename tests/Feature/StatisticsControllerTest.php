@@ -20,19 +20,19 @@ class StatisticsControllerTest extends TestCase
     }
 
     /**
-     * 测试教师可以获取统计信息
+     * Test teacher can get statistics
      */
     public function test_teacher_can_get_statistics()
     {
-        // 创建一个教师用户
+        // Create a teacher user
         $teacher = User::factory()->create(['role' => 'teacher']);
 
-        // 创建3个课程
+        // Create 3 courses
         $courses = Course::factory()->count(3)->create([
             'teacher_id' => $teacher->id
         ]);
 
-        // 为每个课程创建2个账单
+        // Create 2 invoices for each course
         $courses->each(function ($course) {
             $students = User::factory()->count(2)->create(['role' => 'student']);
             $course->students()->attach($students->pluck('id'));
@@ -45,7 +45,7 @@ class StatisticsControllerTest extends TestCase
             });
         });
 
-        // 创建其他教师的课程和账单
+        // Create another teacher's course and invoice
         $otherTeacher = User::factory()->create(['role' => 'teacher']);
         $otherCourse = Course::factory()->create(['teacher_id' => $otherTeacher->id]);
         Invoice::factory()->create([
@@ -53,11 +53,11 @@ class StatisticsControllerTest extends TestCase
             'student_id' => User::factory()->create(['role' => 'student'])->id
         ]);
 
-        // 请求统计信息
+        // Request statistics
         $response = $this->actingAs($teacher, 'api')
             ->getJson('/api/teacher-statistics');
 
-        // 验证响应
+        // Verify response
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'code',
@@ -69,7 +69,7 @@ class StatisticsControllerTest extends TestCase
             ])
             ->assertJson([
                 'code' => 0,
-                'message' => '获取成功',
+                'message' => 'Get successfully',
                 'data' => [
                     'course_count' => 3,
                     'invoice_count' => 6
@@ -78,14 +78,14 @@ class StatisticsControllerTest extends TestCase
     }
 
     /**
-     * 测试学生可以获取统计信息
+     * Test student can get statistics
      */
     public function test_student_can_get_statistics()
     {
-        // 创建一个学生用户
+        // Create a student user
         $student = User::factory()->create(['role' => 'student']);
 
-        // 创建3个课程并关联到学生
+        // Create 3 courses and associate with student
         $courses = Course::factory()->count(3)->create([
             'teacher_id' => User::factory()->create(['role' => 'teacher'])->id
         ]);
@@ -93,7 +93,7 @@ class StatisticsControllerTest extends TestCase
             $course->students()->attach($student->id);
         });
 
-        // 创建2个待支付账单和1个已支付账单
+        // Create 2 pending invoices and 1 paid invoice
         $courses->take(2)->each(function ($course) use ($student) {
             Invoice::factory()->create([
                 'course_id' => $course->id,
@@ -109,7 +109,7 @@ class StatisticsControllerTest extends TestCase
             'sent_at' => now()
         ]);
 
-        // 创建其他学生的课程和账单
+        // Create another student's course and invoice
         $otherStudent = User::factory()->create(['role' => 'student']);
         $otherCourse = Course::factory()->create();
         $otherCourse->students()->attach($otherStudent->id);
@@ -118,11 +118,11 @@ class StatisticsControllerTest extends TestCase
             'student_id' => $otherStudent->id
         ]);
 
-        // 请求统计信息
+        // Request statistics
         $response = $this->actingAs($student, 'api')
             ->getJson('/api/student-statistics');
 
-        // 验证响应
+        // Verify response
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'code',
@@ -134,7 +134,7 @@ class StatisticsControllerTest extends TestCase
             ])
             ->assertJson([
                 'code' => 0,
-                'message' => '获取成功',
+                'message' => 'Get successfully',
                 'data' => [
                     'course_count' => 3,
                     'pending_invoice_count' => 2

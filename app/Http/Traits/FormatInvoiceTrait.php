@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 trait FormatInvoiceTrait
 {
     /**
-     * 格式化学生账单详情
+     * Format student invoice details
      *
      * @param Invoice $invoice
      * @return array
@@ -32,7 +32,7 @@ trait FormatInvoiceTrait
     }
 
     /**
-     * 格式化教师账单列表数据
+     * Format teacher invoice list data
      *
      * @param LengthAwarePaginator $invoices
      * @return LengthAwarePaginator
@@ -56,7 +56,7 @@ trait FormatInvoiceTrait
     }
 
     /**
-     * 格式化学生账单列表数据
+     * Format student invoice list data
      *
      * @param LengthAwarePaginator $invoices
      * @return LengthAwarePaginator

@@ -22,23 +22,23 @@ class TeacherController extends Controller
     }
 
     /**
-     * 教师创建账单
+     * Teacher create invoice
      */
     public function store(CreateInvoiceRequest $request)
     {
         $course = Course::find($request->course_id);
 
         if ($course->teacher_id !== $request->user()->id) {
-            return $this->error('您只能创建自己课程的账单', 1, 403);
+            return $this->error('You can only create invoices for your own courses', 1, 403);
         }
 
         $this->invoiceService->create($course, $request->student_ids);
 
-        return $this->success('账单创建成功');
+        return $this->success('Invoice created successfully');
     }
 
     /**
-     * 教师查看发票列表
+     * Teacher view invoice list
      */
     public function teacherInvoices(Request $request)
     {
@@ -46,16 +46,16 @@ class TeacherController extends Controller
             ->getTeacherInvoicesQuery($request->user()->id, $request->all())
             ->paginate($request->input('per_page', 15));
 
-        return $this->success('获取成功', $this->formatTeacherInvoicesList($invoices));
+        return $this->success('Get successfully', $this->formatTeacherInvoicesList($invoices));
     }
 
     /**
-     * 发送账单
+     * Send invoice
      */
     public function send(SendInvoiceRequest $request, Course $course)
     {
         $this->invoiceService->send($course, $request->student_ids);
 
-        return $this->success('账单已发送');
+        return $this->success('Invoice sent successfully');
     }
 }

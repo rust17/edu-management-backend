@@ -21,7 +21,7 @@ class TeacherControllerTest extends TestCase
     {
         parent::setUp();
 
-        // 创建测试数据
+        // Create test data
         $this->teacher = User::factory()->create(['role' => User::ROLE_TEACHER]);
         $this->student = User::factory()->create(['role' => User::ROLE_STUDENT]);
         $this->course = Course::factory()->create([
@@ -30,7 +30,7 @@ class TeacherControllerTest extends TestCase
     }
 
     /**
-     * 测试教师创建账单
+     * Test teacher can create invoice
      */
     public function test_teacher_can_create_invoice(): void
     {
@@ -43,7 +43,7 @@ class TeacherControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('message', '账单创建成功');
+            ->assertJsonPath('message', 'Invoice created successfully');
 
         $this->assertDatabaseHas('invoices', [
             'course_id' => $this->course->id,
@@ -54,7 +54,7 @@ class TeacherControllerTest extends TestCase
     }
 
     /**
-     * 测试教师不能创建其他教师课程的账单
+     * Test teacher cannot create invoices for other teachers' courses
      */
     public function test_teacher_cannot_create_other_teachers_invoice(): void
     {
@@ -69,11 +69,11 @@ class TeacherControllerTest extends TestCase
         ]);
 
         $response->assertStatus(403)
-            ->assertJsonPath('message', '您只能创建自己课程的账单');
+            ->assertJsonPath('message', 'You can only create invoices for your own courses');
     }
 
     /**
-     * 测试教师发送账单
+     * Test teacher can send invoice
      */
     public function test_teacher_can_send_invoice(): void
     {
@@ -91,7 +91,7 @@ class TeacherControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonPath('message', '账单已发送');
+            ->assertJsonPath('message', 'Invoice sent successfully');
 
         $this->assertDatabaseHas('invoices', [
             'id' => $invoice->id,
@@ -100,7 +100,7 @@ class TeacherControllerTest extends TestCase
     }
 
     /**
-     * 测试教师不能发送其他教师课程的账单
+     * Test teacher cannot send invoices for other teachers' courses
      */
     public function test_teacher_cannot_send_other_teachers_invoice(): void
     {
@@ -114,17 +114,17 @@ class TeacherControllerTest extends TestCase
         ]);
 
         $response->assertStatus(403)
-            ->assertJsonPath('message', '您只能发送自己课程的账单');
+            ->assertJsonPath('message', 'You can only send invoices for your own courses');
     }
 
     /**
-     * 测试教师可以获取自己课程的账单列表
+     * Test teacher can get the invoice list of their own courses
      */
     public function test_teacher_can_get_own_invoices(): void
     {
         Passport::actingAs($this->teacher);
 
-        // 创建3个账单
+        // Create 3 invoices
         Course::factory()->count(3)
             ->create(['teacher_id' => $this->teacher->id])
             ->map(function ($course) {
@@ -136,7 +136,7 @@ class TeacherControllerTest extends TestCase
             });
 
 
-        // 创建其他教师的账单
+        // Create invoices for other teachers
         $otherTeacher = User::factory()->create(['role' => User::ROLE_TEACHER]);
         Invoice::factory()->create([
             'course_id' => Course::factory()->create(['teacher_id' => $otherTeacher->id]),
@@ -147,7 +147,7 @@ class TeacherControllerTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('code', 0)
-            ->assertJsonCount(3, 'data.data')  // 分页数据在 data.data 中
+            ->assertJsonCount(3, 'data.data')  // Paginated data in data.data
             ->assertJsonStructure([
                 'data' => [
                     'data' => [
@@ -172,13 +172,13 @@ class TeacherControllerTest extends TestCase
     }
 
     /**
-     * 测试教师按状态筛选账单
+     * Test teacher can filter invoices by status
      */
     public function test_teacher_can_filter_invoices_by_status(): void
     {
         Passport::actingAs($this->teacher);
 
-        // 创建不同状态的账单
+        // Create invoices with different statuses
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
@@ -200,13 +200,13 @@ class TeacherControllerTest extends TestCase
     }
 
     /**
-     * 测试教师按课程关键词筛选账单
+     * Test teacher can filter invoices by course keyword
      */
     public function test_teacher_can_filter_invoices_by_course_keyword(): void
     {
         Passport::actingAs($this->teacher);
 
-        // 创建数学课程的账单
+        // Create invoices for math courses
         $mathCourse = Course::factory()->create([
             'name' => '高等数学',
             'teacher_id' => $this->teacher->id
@@ -216,7 +216,7 @@ class TeacherControllerTest extends TestCase
             'student_id' => $this->student->id
         ]);
 
-        // 创建英语课程的账单
+        // Create invoices for English courses
         $englishCourse = Course::factory()->create([
             'name' => '大学英语',
             'teacher_id' => $this->teacher->id
@@ -236,13 +236,13 @@ class TeacherControllerTest extends TestCase
     }
 
     /**
-     * 测试教师按课程年月筛选账单
+     * Test teacher can filter invoices by course year month
      */
     public function test_teacher_can_filter_invoices_by_course_year_month(): void
     {
         Passport::actingAs($this->teacher);
 
-        // 创建2024-03的课程账单
+        // Create invoices for March 2024 courses
         $marchCourse = Course::factory()->create([
             'year_month' => '2024-03',
             'teacher_id' => $this->teacher->id
@@ -252,7 +252,7 @@ class TeacherControllerTest extends TestCase
             'student_id' => $this->student->id
         ]);
 
-        // 创建2024-04的课程账单
+        // Create invoices for April 2024 courses
         $aprilCourse = Course::factory()->create([
             'year_month' => '2024-04',
             'teacher_id' => $this->teacher->id
@@ -272,27 +272,27 @@ class TeacherControllerTest extends TestCase
     }
 
     /**
-     * 测试教师按账单发送时间范围筛选账单
+     * Test teacher can filter invoices by send time range
      */
     public function test_teacher_can_filter_invoices_by_send_time_range(): void
     {
         Passport::actingAs($this->teacher);
 
-        // 创建一个较早的账单
+        // Create an earlier invoice
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
             'sent_at' => '2024-03-01 10:00:00'
         ]);
 
-        // 创建一个较晚的账单
+        // Create a later invoice
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,
             'sent_at' => '2024-03-15 10:00:00'
         ]);
 
-        // 创建一个更晚的账单
+        // Create an even later invoice
         Invoice::factory()->create([
             'course_id' => $this->course->id,
             'student_id' => $this->student->id,

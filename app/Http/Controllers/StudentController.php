@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class StudentController extends Controller
 {
     /**
-     * 获取学生列表
+     * Get student list
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -18,7 +18,7 @@ class StudentController extends Controller
     {
         $query = User::query()->where('role', User::ROLE_STUDENT);
 
-        // 按关键词搜索
+        // Search by keyword
         if ($request->filled('keyword')) {
             $query->where(
                 fn ($query) => $query->where('name', 'like', "%{$request->keyword}%")
@@ -26,7 +26,7 @@ class StudentController extends Controller
                 );
         }
 
-        return $this->success('获取成功', $query->get()->map(
+        return $this->success('Get successfully', $query->get()->map(
             fn ($student) => $student->only(['id', 'name']))
         );
     }

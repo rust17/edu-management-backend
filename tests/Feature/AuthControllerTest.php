@@ -43,7 +43,7 @@ class AuthControllerTest extends TestCase
             ])
             ->assertJson([
                 'code' => 0,
-                'message' => '登录成功'
+                'message' => 'Login successful'
             ]);
     }
 
@@ -73,7 +73,7 @@ class AuthControllerTest extends TestCase
             ])
             ->assertJson([
                 'code' => 0,
-                'message' => '登录成功'
+                'message' => 'Login successful'
             ]);
     }
 
@@ -94,7 +94,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(401)
             ->assertJson([
                 'code' => 2,
-                'message' => '用户名或密码错误',
+                'message' => 'Incorrect username or password',
                 'data' => null
             ]);
     }
@@ -110,13 +110,13 @@ class AuthControllerTest extends TestCase
         $response = $this->postJson('/api/login', [
             'email' => 'teacher@example.com',
             'password' => 'password123',
-            'role' => User::ROLE_STUDENT  // 错误的类型
+            'role' => User::ROLE_STUDENT  // Incorrect role
         ]);
 
         $response->assertStatus(401)
             ->assertJson([
                 'code' => 2,
-                'message' => '用户名或密码错误',
+                'message' => 'Incorrect username or password',
                 'data' => null
             ]);
     }
@@ -128,7 +128,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(422)
             ->assertJson([
                 'code' => 1,
-                'message' => '参数校验失败: 用户名必须是邮箱格式 (and 2 more errors)',
+                'message' => 'Validation failed: Username must be in email format (and 2 more errors)',
             ])
             ->assertJsonValidationErrors(['email', 'password', 'role'], 'data');
     }
@@ -141,14 +141,14 @@ class AuthControllerTest extends TestCase
             'role' => 'teacher'
         ]);
 
-        // 先登录获取真实的 token
+        // First login to get a valid token
         $loginResponse = $this->postJson('/api/login', [
             'email' => 'test@example.com',
             'password' => 'password',
             'role' => 'teacher'
         ]);
 
-        // 使用真实的 token 进行登出
+        // Use the valid token to logout
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $loginResponse->json('data.access_token'),
         ])->postJson('/api/logout');
@@ -156,7 +156,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'code' => 0,
-                'message' => '已成功登出',
+                'message' => 'Logged out successfully',
                 'data' => null
             ]);
     }

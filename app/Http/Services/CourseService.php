@@ -11,7 +11,7 @@ use Throwable;
 class CourseService
 {
     /**
-     * 创建课程
+     * Create course
      *
      * @param array $data
      * @param int $teacherId
@@ -41,7 +41,7 @@ class CourseService
     }
 
     /**
-     * 更新课程
+     * Update course
      *
      * @param Course $course
      * @param array $data
@@ -74,7 +74,7 @@ class CourseService
     }
 
     /**
-     * 获取教师课程列表的查询构建器
+     * Get the query builder for the teacher course list
      *
      * @param int $teacherId
      * @param array $filters
@@ -97,7 +97,7 @@ class CourseService
     }
 
     /**
-     * 获取学生课程列表的查询构建器
+     * Get the query builder for the student course list
      *
      * @param int $studentId
      * @param array $filters

@@ -10,7 +10,7 @@ use Tests\TestCase;
 class PaymentHandlerFactoryTest extends TestCase
 {
     /**
-     * @testdox 创建 Omise 支付处理器
+     * @testdox Create Omise payment handler
      */
     public function testCreateOmiseHandler()
     {
@@ -19,7 +19,7 @@ class PaymentHandlerFactoryTest extends TestCase
     }
 
     /**
-     * @testdox 创建不支持的支付处理器
+     * @testdox Create unsupported payment handler
      */
     public function testCreateUnsupportedHandler()
     {

@@ -20,11 +20,11 @@ class OmisePaymentStrategyTest extends PaymentTestCase
     }
 
     /**
-     * @testdox 使用 Omise 支付成功
+     * @testdox Successful payment using Omise
      */
     public function testPaySuccess()
     {
-        // Mock OmisePay 服务
+        // Mock OmisePay service
         $charge = Mockery::mock('overload:OmiseCharge', 'ArrayAccess');
         $charge->shouldReceive('create')
             ->once()
@@ -65,11 +65,11 @@ class OmisePaymentStrategyTest extends PaymentTestCase
     }
 
     /**
-     * @testdox 使用 Omise 支付失败，余额不足
+     * @testdox Payment failure with insufficient funds
      */
     public function testPayFailureWithInsufficientFund()
     {
-        // Mock OmiseCharge 服务
+        // Mock OmiseCharge service
         $charge = Mockery::mock('overload:OmiseCharge', 'ArrayAccess');
         $charge->shouldReceive('offsetGet')
             ->with('failure_code')
@@ -92,13 +92,13 @@ class OmisePaymentStrategyTest extends PaymentTestCase
             ->andReturn($charge);
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessage('支付失败，余额不足');
+        $this->expectExceptionMessage('Payment failed, insufficient funds');
 
         $this->strategy->pay($this->invoice, ['token' => 'tok_test_123']);
     }
 
     /**
-     * @testdox 获取支付平台
+     * @testdox Get payment platform
      */
     public function testGetPlatform()
     {
@@ -109,7 +109,7 @@ class OmisePaymentStrategyTest extends PaymentTestCase
     }
 
     /**
-     * @testdox 获取支付方式
+     * @testdox Get payment method
      */
     public function testGetMethod()
     {

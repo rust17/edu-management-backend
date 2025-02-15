@@ -11,12 +11,12 @@ define('OMISE_API_VERSION', config('services.omise.api_version'));
 class OmisePay
 {
     /**
-     * 使用 token 向信用卡收款
+     * Charge card with token
      *
-     * @param string $amount 金额
-     * @param string $currency 货币
-     * @param string $description 描述
-     * @param string $token 信用卡 token
+     * @param string $amount Amount
+     * @param string $currency Currency
+     * @param string $description Description
+     * @param string $token Credit card token
      *
      * @return OmiseCharge
      *

@@ -20,16 +20,16 @@ class CreateCourseRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => '课程名称不能为空',
-            'name.max' => '课程名称不能超过255个字符',
-            'year_month.required' => '年月不能为空',
-            'year_month.date_format' => '年月格式必须为YYYY-MM',
-            'fee.required' => '费用不能为空',
-            'fee.numeric' => '费用必须为数字',
-            'fee.min' => '费用不能小于0',
-            'student_ids.required' => '学生不能为空',
-            'student_ids.array' => '学生必须为数组',
-            'student_ids.*.exists' => '学生不存在',
+            'name.required' => 'Course name cannot be empty',
+            'name.max' => 'Course name cannot exceed 255 characters',
+            'year_month.required' => 'Year and month cannot be empty',
+            'year_month.date_format' => 'Year and month format must be YYYY-MM',
+            'fee.required' => 'Fee cannot be empty',
+            'fee.numeric' => 'Fee must be a number',
+            'fee.min' => 'Fee cannot be less than 0',
+            'student_ids.required' => 'Student cannot be empty',
+            'student_ids.array' => 'Student must be an array',
+            'student_ids.*.exists' => 'Student does not exist',
         ];
     }
 }

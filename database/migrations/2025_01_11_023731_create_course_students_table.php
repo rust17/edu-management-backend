@@ -18,7 +18,7 @@ class CreateCourseStudentsTable extends Migration
             $table->unsignedBigInteger('course_id');
             $table->unsignedBigInteger('student_id'); // users.id
 
-            // 唯一约束，避免重复关联
+            // Unique constraint to avoid duplicate associations
             $table->unique(['course_id', 'student_id']);
         });
     }

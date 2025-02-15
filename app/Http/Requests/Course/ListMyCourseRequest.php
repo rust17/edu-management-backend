@@ -19,13 +19,13 @@ class ListMyCourseRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'year_month.date_format' => '年月格式必须为YYYY-MM',
-            'page.integer' => '页码必须为整数',
-            'page.min' => '页码不能小于1',
-            'per_page.integer' => '每页数量必须为整数',
-            'per_page.min' => '每页数量不能小于1',
-            'per_page.max' => '每页数量不能大于100',
-            'keyword.string' => '关键词必须为字符串'
+            'year_month.date_format' => 'The year and month format must be YYYY-MM',
+            'page.integer' => 'The page number must be an integer',
+            'page.min' => 'The page number cannot be less than 1',
+            'per_page.integer' => 'The number per page must be an integer',
+            'per_page.min' => 'The number per page cannot be less than 1',
+            'per_page.max' => 'The number per page cannot be greater than 100',
+            'keyword.string' => 'The keyword must be a string'
         ];
     }
 }

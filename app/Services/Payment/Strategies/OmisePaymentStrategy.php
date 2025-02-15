@@ -40,7 +40,7 @@ class OmisePaymentStrategy implements PaymentStrategy
     }
 
     /**
-     * 验证支付结果
+     * Validate payment result
      *
      * @param OmiseCharge $charge
      * @throws Exception
@@ -48,17 +48,17 @@ class OmisePaymentStrategy implements PaymentStrategy
     protected function validateCharge(OmiseCharge $charge): void
     {
         $errorMessages = [
-            'insufficient_fund' => '支付失败，余额不足',
-            'insufficient_balance' => '支付失败，余额不足',
-            'failed_fraud_check' => '支付失败，卡被标记为欺诈，建议使用其他信用卡',
-            'confirmed_amount_mismatch' => '支付失败，支付通道金额与订单金额不匹配，请稍后重试',
-            'failed_processing' => '支付失败，支付通道处理失败，请稍后重试',
-            'invalid_account_number' => '支付失败，卡号或用户名错误，请使用其他信用卡',
-            'invalid_account' => '支付失败，卡号或用户名错误，请使用其他信用卡',
-            'payment_cancelled' => '支付失败，您已取消支付',
-            'payment_rejected' => '支付失败，被发卡行拒绝',
-            'stolen_or_lost_card' => '支付失败，卡被盗或丢失，请使用其他信用卡',
-            'timeout' => '支付失败，支付通道超时，请稍后重试',
+            'insufficient_fund' => 'Payment failed, insufficient funds',
+            'insufficient_balance' => 'Payment failed, insufficient balance',
+            'failed_fraud_check' => 'Payment failed, the card is marked as fraudulent, it is recommended to use another credit card',
+            'confirmed_amount_mismatch' => 'Payment failed, the payment gateway amount does not match the order amount, please try again later',
+            'failed_processing' => 'Payment failed, payment gateway processing failed, please try again later',
+            'invalid_account_number' => 'Payment failed, card number or username is incorrect, please use another credit card',
+            'invalid_account' => 'Payment failed, card number or username is incorrect, please use another credit card',
+            'payment_cancelled' => 'Payment failed, you have cancelled the payment',
+            'payment_rejected' => 'Payment failed, rejected by the issuing bank',
+            'stolen_or_lost_card' => 'Payment failed, the card is stolen or lost, please use another credit card',
+            'timeout' => 'Payment failed, payment gateway timeout, please try again later',
         ];
 
         if ($errMessage = $errorMessages[$charge['failure_code'] ?? ''] ?? '') {

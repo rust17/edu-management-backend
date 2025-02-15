@@ -38,7 +38,7 @@ class Handler extends ExceptionHandler
     {
         if ($request->expectsJson()) {
             if ($e instanceof ValidationException) {
-                return $this->error('参数校验失败: ' . $e->getMessage(), 1, 422, $e->errors());
+                return $this->error('Validation failed: ' . $e->getMessage(), 1, 422, $e->errors());
             }
 
             if ($e instanceof AuthorizationException) {
@@ -49,7 +49,7 @@ class Handler extends ExceptionHandler
                 return $this->error($e->getMessage(), 1, 401);
             }
 
-            // 其他异常
+            // Other exceptions
             return $this->error($e->getMessage(), 2, 500);
         }
 

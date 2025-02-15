@@ -18,7 +18,7 @@ abstract class AbstractPaymentHandler
     }
 
     /**
-     * 处理支付流程
+     * Handle payment process
      *
      * @param Invoice $invoice
      * @param array $params
@@ -27,13 +27,13 @@ abstract class AbstractPaymentHandler
     public function handle(Invoice $invoice, array $params): array
     {
         try {
-            // 1. 调用具体支付策略进行支付
+            // 1. Call the specific payment strategy for payment
             $result = $this->strategy->pay($invoice, $params);
 
-            // 2. 更新订单状态和创建支付记录
+            // 2. Update order status and create payment record
             $this->updatePaymentStatus($invoice, $result);
 
-            return ['success' => true, 'message' => '支付成功'];
+            return ['success' => true, 'message' => 'Payment successful'];
         } catch (Exception $e) {
             $this->handleError($e, $invoice, $result ?? []);
 
@@ -42,7 +42,7 @@ abstract class AbstractPaymentHandler
     }
 
     /**
-     * 更新支付状态
+     * Update payment status
      *
      * @param Invoice $invoice
      * @param array $result
@@ -71,12 +71,12 @@ abstract class AbstractPaymentHandler
         } catch (Exception $e) {
             DB::rollBack();
 
-            throw new Exception('您已支付成功，但是更新状态失败，请联系管理员');
+            throw new Exception('You have successfully paid, but the update status failed, please contact the administrator');
         }
     }
 
     /**
-     * 处理错误
+     * Handle errors
      *
      * @param Exception $e
      * @param Invoice $invoice
@@ -85,10 +85,10 @@ abstract class AbstractPaymentHandler
     protected function handleError(Exception $e, Invoice $invoice, array $result): void
     {
         if (!empty($result['is_paid'])) {
-            // 如果已经支付成功但更新状态失败
+            // If payment is successful but updating status fails
             Log::error(sprintf(
                 <<<EOT
-pay-error-update-invoice-status: %s 可以执行以下命令修复数据
+pay-error-update-invoice-status: %s You can execute the following command to fix the data
 php artisan fix-invoice-status --invoice_id=%s --transaction_no=%s --transaction_fee=%s
 EOT,
                 $e->getMessage(),
@@ -100,7 +100,7 @@ EOT,
             return;
         }
 
-        // 支付过程中的其他错误
+        // Other errors during the payment process
         Log::error('payment-error: ' . $e->getMessage(), [
             'invoice_id' => $invoice->id,
             'params' => $result

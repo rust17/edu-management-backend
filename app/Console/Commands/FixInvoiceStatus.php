@@ -10,24 +10,24 @@ use Illuminate\Console\Command;
 class FixInvoiceStatus extends Command
 {
     /**
-     * 命令名称和参数
+     * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'fix-invoice-status
-                            {--invoice_id= : 需要修复的账单ID}
-                            {--transaction_no= : 支付平台交易号}
-                            {--transaction_fee= : 交易手续费}';
+                            {--invoice_id= : The ID of the invoice to be fixed}
+                            {--transaction_no= : Payment platform transaction number}
+                            {--transaction_fee= : Transaction fee}';
 
     /**
-     * 命令描述
+     * The console command description.
      *
      * @var string
      */
-    protected $description = '修复支付成功但状态未更新的账单';
+    protected $description = 'Fix invoices that are paid but have not been updated';
 
     /**
-     * 执行命令
+     * Execute the console command.
      */
     public function handle()
     {
@@ -36,31 +36,31 @@ class FixInvoiceStatus extends Command
         $transactionFee = $this->option('transaction_fee');
 
         if (!$invoiceId || !$transactionNo || !$transactionFee) {
-            $this->error('缺少必要参数');
+            $this->error('Missing required parameters');
             return 1;
         }
 
         if (!$invoice = Invoice::find($invoiceId)) {
-            $this->error('账单不存在');
+            $this->error('Invoice does not exist');
             return 1;
         }
 
         if ($invoice->status === Invoice::STATUS_PAID) {
-            $this->info('账单已经是支付状态，无需修复');
+            $this->info('The invoice is already in the paid state and does not need to be fixed');
             return 0;
         }
 
         try {
-            // 使用支付处理器的更新状态方法
+            // Use the payment processor's update status method
             PaymentHandlerFactory::create('omise')->updatePaymentStatus($invoice, [
                 'transaction_no' => $transactionNo,
                 'transaction_fee' => $transactionFee,
             ]);
 
-            $this->info('账单状态修复成功');
+            $this->info('Invoice status fixed successfully');
             return 0;
         } catch (Exception $e) {
-            $this->error('修复失败: ' . $e->getMessage());
+            $this->error('Fix failed: ' . $e->getMessage());
             return 1;
         }
     }

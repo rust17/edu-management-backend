@@ -17,9 +17,9 @@ class OmisePayRequest extends FormRequest
     public function messages()
     {
         return [
-            'invoice_id.required' => '账单ID不能为空',
-            'invoice_id.exists' => '账单不存在',
-            'token.required' => 'token不能为空',
+            'invoice_id.required' => 'Invoice ID cannot be empty',
+            'invoice_id.exists' => 'Invoice does not exist',
+            'token.required' => 'token cannot be empty',
         ];
     }
 }

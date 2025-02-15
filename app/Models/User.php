@@ -39,26 +39,26 @@ class User extends Authenticatable
     const ROLE_TEACHER = 'teacher';
     const ROLE_STUDENT = 'student';
 
-    // 获取该教师的所有课程
+    // Get all courses for the teacher
     public function teacherCourses()
     {
         return $this->hasMany(Course::class, 'teacher_id');
     }
 
-    // 获取该学生参加的所有课程
+    // Get all courses that the student is attending
     public function studentCourses()
     {
         return $this->belongsToMany(Course::class, 'course_students', 'student_id', 'course_id');
     }
 
-    // 获取该学生的所有发票
+    // Get all invoices for the student
     public function invoices()
     {
         return $this->hasMany(Invoice::class, 'student_id');
     }
 
     /**
-     * 获取教师扩展信息
+     * Get teacher extended information
      */
     public function teacherProfile()
     {
@@ -66,7 +66,7 @@ class User extends Authenticatable
     }
 
     /**
-     * 获取学生扩展信息
+     * Get student extended information
      */
     public function studentProfile()
     {

@@ -16,13 +16,13 @@ class CourseStudent extends Model
 
     public $timestamps = false;
 
-    // 获取关联的课程
+    // Get the associated course
     public function course()
     {
         return $this->belongsTo(Course::class);
     }
 
-    // 获取关联的学生
+    // Get the associated student
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');

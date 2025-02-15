@@ -12,7 +12,7 @@ use Throwable;
 class InvoiceService
 {
     /**
-     * 创建发票
+     * Create invoices
      *
      * @param Course $course
      * @param array $studentIds
@@ -26,7 +26,7 @@ class InvoiceService
 
             $invoices = [];
             foreach ($studentIds as $studentId) {
-                // 检查是否已经存在发票
+                // Check if the invoice already exists
                 if (Invoice::where('course_id', $course->id)
                     ->where('student_id', $studentId)
                     ->exists()
@@ -52,7 +52,7 @@ class InvoiceService
     }
 
     /**
-     * 发送账单
+     * Send invoice
      *
      * @param Course $course
      * @param array $studentIds
@@ -76,7 +76,7 @@ class InvoiceService
     }
 
     /**
-     * 获取教师发票列表的查询构建器
+     * Get the query builder for the teacher invoice list
      *
      * @param int $teacherId
      * @param array $filters
@@ -88,12 +88,12 @@ class InvoiceService
             ->whereHas('course', fn ($query) => $query->where('teacher_id', $teacherId))
             ->latest('id');
 
-        // 按状态筛选
+        // Filter by status
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
-        // 按课程关键词筛选
+        // Filter by course keyword
         if (isset($filters['keyword'])) {
             $query->whereHas('course',
                 fn ($query) => $query->where('name', 'like', '%' . $filters['keyword'] . '%')
@@ -102,14 +102,14 @@ class InvoiceService
             );
         }
 
-        // 按课程年月筛选
+        // Filter by course year and month
         if (isset($filters['year_month'])) {
             $query->whereHas('course',
                 fn ($query) => $query->where('year_month', Carbon::parse($filters['year_month'])->startOfMonth())
             );
         }
 
-        // 按账单发送时间筛选
+        // Filter by invoice sending time
         if (isset($filters['send_start']) && isset($filters['send_end'])) {
             $query->whereBetween('sent_at', [$filters['send_start'], $filters['send_end']]);
         }
@@ -118,7 +118,7 @@ class InvoiceService
     }
 
     /**
-     * 获取学生发票列表的查询构建器
+     * Get the query builder for the student invoice list
      *
      * @param int $studentId
      * @param array $filters
@@ -127,30 +127,30 @@ class InvoiceService
     public function getStudentInvoicesQuery(int $studentId, array $filters): Builder
     {
         $query = Invoice::where('student_id', $studentId)
-            ->whereNotNull('sent_at') // 老师发送账单后，学生才能看到
+            ->whereNotNull('sent_at') // After the teacher sends the invoice, the student can see it
             ->with(['course', 'payment'])
             ->latest('id');
 
-        // 按状态筛选
+        // Filter by status
         if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
-        // 按课程关键词筛选
+        // Filter by course keyword
         if (isset($filters['keyword'])) {
             $query->whereHas('course',
                 fn ($query) => $query->where('name', 'like', '%' . $filters['keyword'] . '%')
             );
         }
 
-        // 按课程年月筛选
+        // Filter by course year and month
         if (isset($filters['year_month'])) {
             $query->whereHas('course',
                 fn ($query) => $query->where('year_month', Carbon::parse($filters['year_month'])->startOfMonth())
             );
         }
 
-        // 按账单发送时间筛选
+        // Filter by invoice sending time
         if (isset($filters['send_start']) && isset($filters['send_end'])) {
             $query->whereBetween('sent_at', [$filters['send_start'], $filters['send_end']]);
         }

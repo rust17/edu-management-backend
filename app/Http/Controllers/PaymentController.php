@@ -14,7 +14,7 @@ class PaymentController extends Controller
         $invoice = Invoice::findOrFail($request->invoice_id);
 
         if ($invoice->status === Invoice::STATUS_PAID) {
-            return $this->error('订单已支付', 1, 422);
+            return $this->error('The order has already been paid', 1, 422);
         }
 
         $result = PaymentHandlerFactory::create('omise')->handle($invoice, ['token' => $request->token]);

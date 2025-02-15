@@ -19,10 +19,10 @@ class AuthRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.*' => '用户名必须是邮箱格式',
-            'password.required' => '密码不能为空',
-            'role.required' => '角色不能为空',
-            'role.in' => '角色必须是老师或学生'
+            'email.*' => 'Username must be in email format',
+            'password.required' => 'Password cannot be empty',
+            'role.required' => 'Role cannot be empty',
+            'role.in' => 'Role must be teacher or student'
         ];
     }
 }

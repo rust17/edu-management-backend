@@ -20,7 +20,7 @@ class StudentController extends Controller
     }
 
     /**
-     * 获取学生的课程列表
+     * Get student's course list
      */
     public function studentCourses(ListMyCourseRequest $request)
     {
@@ -28,20 +28,20 @@ class StudentController extends Controller
             ->getStudentCoursesQuery($request->user()->id, $request->all())
             ->paginate($request->input('per_page', 15));
 
-        return $this->success('获取成功', $this->formatStudentCoursesList($courses));
+        return $this->success('Get successfully', $this->formatStudentCoursesList($courses));
     }
 
     /**
-     * 学生查看课程详情
+     * Student view course details
      */
     public function studentCourse(Course $course)
     {
         if (!$course->students()->where('student_id', auth()->id())->exists()) {
-            return $this->error('您没有权限查看该课程', 1, 403);
+            return $this->error('You do not have permission to view this course', 1, 403);
         }
 
         $course->load(['teacher:id,name']);
 
-        return $this->success('获取成功', $this->formatStudentCourseDetail($course));
+        return $this->success('Get successfully', $this->formatStudentCourseDetail($course));
     }
 }

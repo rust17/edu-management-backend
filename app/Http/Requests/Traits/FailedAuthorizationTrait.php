@@ -9,12 +9,12 @@ trait FailedAuthorizationTrait
     protected $errorMessage;
 
     /**
-     * 处理授权失败的情况
+     * Handle a failed authorization attempt.
      *
      * @throws AuthorizationException
      */
     protected function failedAuthorization()
     {
-        throw new AuthorizationException($this->errorMessage ?? '您没有权限执行此操作');
+        throw new AuthorizationException($this->errorMessage ?? 'You do not have permission to perform this operation');
     }
 }

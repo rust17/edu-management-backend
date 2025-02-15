@@ -1,6 +1,6 @@
 FROM php:8.2-fpm
 
-# 安装系统依赖
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,40 +12,40 @@ RUN apt-get update && apt-get install -y \
     unzip \
     nginx
 
-# 清理 apt 缓存
+# Clean apt cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 安装 PHP 扩展
+# Install PHP extensions
 RUN docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd
 
-# 安装 Composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 设置工作目录
+# Set working directory
 WORKDIR /var/www/html
 
-# 复制项目文件
+# Copy project files
 COPY . /var/www/html
 
-# 设置目录权限
+# Set directory permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage
 
-# 安装项目依赖
+# Install project dependencies
 RUN composer install --optimize-autoloader --no-dev
 
-# 复制 Nginx 配置文件
+# Copy Nginx configuration file
 COPY docker/nginx/default.conf /etc/nginx/sites-enabled/default
 
-# 复制 PHP-FPM 配置
+# Copy PHP-FPM configuration
 COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-# 暴露端口
+# Expose port
 EXPOSE 80
 
-# 复制启动脚本
+# Copy startup script
 COPY docker/init.sh /usr/local/bin/init.sh
 RUN chmod +x /usr/local/bin/init.sh
 
-# 启动服务
+# Start services
 CMD ["/usr/local/bin/init.sh"]

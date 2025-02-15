@@ -3,32 +3,32 @@
 namespace App\Traits;
 
 /**
- * 将响应统一为这种格式，业务码为 0 表示成功，非 0 表示失败，并且可以自定义 HTTP 状态码
+ * Unify the response to this format, the business code is 0 for success, non-0 for failure, and the HTTP status code can be customized
  * {
  *     "code": 200,
- *     "message": "操作成功",
+ *     "message": "Operation successful",
  *     "data": null
  * }
  *
- * 使用方法：
- * return $this->success('操作成功');
- * return $this->success('操作成功', $data);
- * return $this->error('操作失败');
- * return $this->error('操作失败', 2, 200, $data);
+ * How to use:
+ * return $this->success('Operation successful');
+ * return $this->success('Operation successful', $data);
+ * return $this->error('Operation failed');
+ * return $this->error('Operation failed', 2, 200, $data);
  */
 trait JsonResponse
 {
     /**
-     * 成功响应
+     * Success response
      *
-     * @param string $message 消息
-     * @param mixed $data 数据
-     * @param int $code 业务码
-     * @param int $status HTTP 状态码
+     * @param string $message Message
+     * @param mixed $data Data
+     * @param int $code Business code
+     * @param int $status HTTP status code
      * @return \Illuminate\Http\JsonResponse
      */
     protected function success(
-        string $message = '操作成功',
+        string $message = 'Operation successful',
         $data = null,
         int $code = 0,
         int $status = 200
@@ -41,16 +41,16 @@ trait JsonResponse
     }
 
     /**
-     * 失败响应
+     * Error response
      *
-     * @param string $message 消息
-     * @param int $code 业务码
-     * @param int $status HTTP 状态码
-     * @param mixed $data 数据
+     * @param string $message Message
+     * @param int $code Business code
+     * @param int $status HTTP status code
+     * @param mixed $data Data
      * @return \Illuminate\Http\JsonResponse
      */
     protected function error(
-        string $message = '操作失败',
+        string $message = 'Operation failed',
         int $code = 1,
         int $status = 400,
         $data = null

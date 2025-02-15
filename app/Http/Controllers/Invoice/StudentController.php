@@ -20,7 +20,7 @@ class StudentController extends Controller
     }
 
     /**
-     * 学生查看账单列表
+     * Student view invoice list
      */
     public function studentInvoices(Request $request)
     {
@@ -28,18 +28,18 @@ class StudentController extends Controller
             ->getStudentInvoicesQuery($request->user()->id, $request->all())
             ->paginate($request->input('per_page', 15));
 
-        return $this->success('获取成功', $this->formatStudentInvoiceList($invoices));
+        return $this->success('Get successfully', $this->formatStudentInvoiceList($invoices));
     }
 
     /**
-     * 学生查看账单详情
+     * Student view invoice details
      */
     public function studentInvoice(Invoice $invoice)
     {
         if ($invoice->student_id !== auth()->id()) {
-            return $this->error('您没有权限查看该账单', 1, 403);
+            return $this->error('You do not have permission to view this invoice', 1, 403);
         }
 
-        return $this->success('获取成功', $this->formatStudentInvoiceDetail($invoice));
+        return $this->success('Get successfully', $this->formatStudentInvoiceDetail($invoice));
     }
 }

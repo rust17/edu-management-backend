@@ -1,70 +1,70 @@
-# 教育管理系统 API
+# Education Management System API
 
-这是一个基于 Laravel 10.x 开发的教育管理系统后端 API，主要用于管理教师、学生、课程和账单等功能。
+This is a backend API for an education management system developed based on Laravel 10.x, mainly used to manage functions such as teachers, students, courses, and bills.
 
-## 主要功能
+## Main Features
 
-### 1. 用户认证
-- 基于 Laravel Passport 的 OAuth2 认证
-- 支持教师/学生多角色登录
-- 完善的权限控制中间件
+### 1. User Authentication
+- OAuth2 authentication based on Laravel Passport
+- Support for teacher/student multi-role login
+- Complete permission control middleware
 
-### 2. 课程管理
-- 教师：创建、编辑、查看课程
-- 学生：查看已选课程
-- 支持课程搜索和分页
+### 2. Course Management
+- Teachers: Create, edit, and view courses
+- Students: View selected courses
+- Support course search and pagination
 
-### 3. 账单系统
-- 教师：创建和发送账单
-- 学生：查看和支付账单
-- 完整的账单状态流转
+### 3. Billing System
+- Teachers: Create and send bills
+- Students: View and pay bills
+- Complete bill status flow
 
-### 4. 支付集成
-- 集成 Omise 支付系统
-- 支持信用卡支付
-- 完善的支付状态追踪
+### 4. Payment Integration
+- Integrated Omise payment system
+- Support credit card payment
+- Complete payment status tracking
 
-### 5. 数据统计
-- 教师：课程数、账单总数统计
-- 学生：已选课程数、待支付账单统计
+### 5. Data Statistics
+- Teachers: Statistics on the number of courses and total number of bills
+- Students: Statistics on the number of selected courses and bills pending payment
 
-## 技术特点
+## Technical Features
 
-- 采用 Controller-Service 分层架构
-- 使用 Trait 复用公共功能
-- 统一的响应格式和错误处理
-- 遵循 PSR-12 编码规范
-- 使用 PHP 8.1+ 新特性
-- 完善的代码注释
-- 测试场景完整
+- Adopt Controller-Service layered architecture
+- Use Trait to reuse common functions
+- Unified response format and error handling
+- Follow PSR-12 coding standards
+- Use PHP 8.1+ new features
+- Complete code comments
+- Complete test scenarios
 
-## 环境要求
+## Environment Requirements
 
 - PHP >= 8.2
 - PostgreSQL >= 13
 - Composer
-- Redis (可选，用于缓存)
+- Redis (optional, for caching)
 
-## 快速开始
+## Quick Start
 
-1. **克隆项目**
+1. **Clone the project**
 ```bash
-git clone [项目地址]
+git clone [project address]
 cd edu-management-backend
 ```
 
-2. **安装依赖**
+2. **Install dependencies**
 ```bash
 composer install
 ```
 
-3. **环境配置**
+3. **Environment configuration**
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-4. **配置数据库**
+4. **Configure the database**
 ```env
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
@@ -74,95 +74,95 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-5. **运行迁移**
+5. **Run migrations**
 ```bash
 php artisan migrate
 ```
 
-6. **配置 Passport（可选）**
+6. **Configure Passport (optional)**
 ```bash
 php artisan passport:install
 ```
 
-## 部署注意事项
+## Deployment Notes
 
-1. 生产环境配置
+1. Production environment configuration
 ```env
 APP_ENV=production
 APP_DEBUG=false
 ```
 
-2. 安装依赖
+2. Install dependencies
 ```bash
 composer install --optimize-autoloader --no-dev
 ```
 
-3. 缓存配置和路由
+3. Cache configuration and routes
 ```bash
 php artisan config:cache
 php artisan route:cache
 ```
 
-4. 配置 Omise 支付密钥
+4. Configure Omise payment keys
 ```env
 OMISE_PUBLIC_KEY=your_public_key
 OMISE_SECRET_KEY=your_secret_key
 ```
 
-## Docker 部署
+## Docker Deployment
 
-1. **构建镜像**
+1. **Build image**
 ```bash
 docker build -t edu-management-api .
 ```
 
-2. **运行容器**
-部署：
+2. **Run container**
+Deployment:
 ```bash
 docker run -d \
     --name edu-api \
     -p 8080:80 \
-    -v $(pwd)/.env:/var/www/html/.env \ <------- 可以通过挂载 .env 文件提供 Laravel 所需的环境变量
-    -e FORCE_MIGRATION=true \           <------- 如果需要运行迁移
-    -e PASSPORT_INSTALLED=true \        <------- 如果需要安装 Passport
-    -e APP_NAME={APP_NAME}              <------- 也可以通过 -e 提供环境变量
-    -e APP_KEY={APP_KEY}                <------- 也可以通过 -e 提供环境变量
-    -e APP_ENV=production               <------- 也可以通过 -e 提供环境变量
-    -e APP_DEBUG=false                  <------- 也可以通过 -e 提供环境变量
-    -e 你的环境变量...
+    -v $(pwd)/.env:/var/www/html/.env \ <------- You can provide the environment variables required by Laravel by mounting the .env file
+    -e FORCE_MIGRATION=true \           <------- If you need to run migrations
+    -e PASSPORT_INSTALLED=true \        <------- If you need to install Passport
+    -e APP_NAME={APP_NAME}              <------- You can also provide environment variables through -e
+    -e APP_KEY={APP_KEY}                <------- You can also provide environment variables through -e
+    -e APP_ENV=production               <------- You can also provide environment variables through -e
+    -e APP_DEBUG=false                  <------- You can also provide environment variables through -e
+    -e your environment variables...
     edu-management-api
 ```
 
-3. **访问服务**
-服务将在 http://localhost:8080 上运行。
+3. **Access service**
+The service will run on http://localhost:8080.
 
-4. **查看初始化日志**
+4. **View initialization logs**
 ```bash
 docker logs edu-api
 ```
 
-### 部署说明
+### Deployment Instructions
 
-- 通过设置 `FORCE_MIGRATION=true`、`PASSPORT_INSTALLED=true` 环境变量来运行数据库迁移和 Passport 安装
-- 既可以通过挂载 `.env` 文件来提供环境变量，也可以通过 docker 的 `-e` 参数来提供环境变量，这些环境变量会覆盖 `.env` 文件中的配置
-- 初始化脚本会自动检查数据库连接并等待数据库就绪
-- 可以通过查看容器日志来监控初始化过程
+- Set the `FORCE_MIGRATION=true` and `PASSPORT_INSTALLED=true` environment variables to run database migrations and Passport installation
+- You can provide environment variables either by mounting the `.env` file or by using the docker `-e` parameter. These environment variables will override the configuration in the `.env` file.
+- The initialization script will automatically check the database connection and wait for the database to be ready
+- You can monitor the initialization process by viewing the container logs
 
-### 故障排查
+### Troubleshooting
 
-如果遇到初始化问题，可以：
+If you encounter initialization problems, you can:
 
-1. 检查数据库连接配置
+1. Check the database connection configuration
 ```bash
 docker exec edu-api php artisan db:monitor
 ```
 
-2. 手动运行迁移
+2. Manually run migrations
 ```bash
 docker exec edu-api php artisan migrate
 ```
 
-3. 手动安装 Passport
+3. Manually install Passport
 ```bash
 docker exec edu-api php artisan passport:install
 ```
